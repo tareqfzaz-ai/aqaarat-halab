@@ -2,12 +2,212 @@ index.html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>عقارات الظاظا</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عقارات الظاظا</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f5f5f5;
+  color: #222;
+}
+
+header {
+  background: #111;
+  color: #d4af37;
+  padding: 22px 15px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: white;
+}
+
+.search {
+  background: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px #ccc;
+}
+
+.search input,
+.search select {
+  padding: 12px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.search button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  background: #d4af37;
+  color: #111;
+  font-weight: bold;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 25px auto;
+  padding: 15px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px #ccc;
+}
+
+.card .photo {
+  height: 180px;
+  background: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card h3 {
+  color: #b28b18;
+  margin-bottom: 10px;
+}
+
+.card p {
+  margin: 7px 0;
+}
+
+.contact {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  padding: 11px;
+  background: #111;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+footer {
+  margin-top: 40px;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 25px;
+}
+</style>
 </head>
+
 <body>
+
+<header>
   <h1>🏠 عقارات الظاظا</h1>
-  <p>منصة عقارية للإعلانات والبيع والشراء والإيجار</p>
+  <p>منصة عقارية للإعلانات في حلب</p>
+</header>
+
+<section class="search">
+  <input type="text" placeholder="ابحث عن عقار...">
+
+  <select>
+    <option>نوع العقار</option>
+    <option>منزل</option>
+    <option>شقة</option>
+    <option>أرض</option>
+    <option>مزرعة</option>
+    <option>محل</option>
+  </select>
+
+  <select>
+    <option>المنطقة</option>
+    <option>سيف الدولة</option>
+    <option>الأعظمية</option>
+    <option>الحمدانية</option>
+    <option>الجميلية</option>
+    <option>الزهراء</option>
+    <option>مناطق أخرى</option>
+  </select>
+
+  <button>بحث 🔎</button>
+</section>
+
+<div class="container">
+
+  <h2 class="title">أحدث العقارات</h2>
+
+  <div class="cards">
+
+    <div class="card">
+      <div class="photo">🏠</div>
+      <div class="card-content">
+        <h3>منزل للبيع</h3>
+        <p>📍 سيف الدولة - حلب</p>
+        <p>💰 السعر: للاستفسار</p>
+        <a class="contact" href="https://wa.me/963957839713">
+          تواصل واتساب
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="photo">🏢</div>
+      <div class="card-content">
+        <h3>محل للإيجار</h3>
+        <p>📍 الأعظمية - حلب</p>
+        <p>💰 السعر: للاستفسار</p>
+        <a class="contact" href="https://wa.me/963957839713">
+          تواصل واتساب
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="photo">🌳</div>
+      <div class="card-content">
+        <h3>أرض للبيع</h3>
+        <p>📍 ريف حلب</p>
+        <p>💰 السعر: للاستفسار</p>
+        <a class="contact" href="https://wa.me/963957839713">
+          تواصل واتساب
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <h3>عقارات الظاظا</h3>
+  <p>بيع • شراء • إيجار</p>
+  <p>حلب والمناطق المحيطة</p>
+</footer>
+
 </body>
 </html>
