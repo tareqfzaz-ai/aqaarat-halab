@@ -217,18 +217,28 @@ index.html
 
 <div class="form-box" id="formBox">
 
-  <h2>إضافة إعلان عقاري</h2>
+  <h2 id="formTitle">إضافة إعلان عقاري</h2>
 
-  <input id="title" type="text" placeholder="عنوان العقار">
+  <input id="title" type="text" placeholder="عنوان العقار *">
+
+  <select id="purpose">
+    <option value="">نوع العملية *</option>
+    <option>بيع</option>
+    <option>إيجار</option>
+    <option>رهن</option>
+  </select>
 
   <select id="type">
-    <option value="">نوع العقار</option>
+    <option value="">نوع العقار *</option>
     <option>منزل</option>
     <option>شقة</option>
     <option>أرض</option>
     <option>مزرعة</option>
     <option>محل</option>
     <option>مكتب</option>
+    <option>فيلا</option>
+    <option>مستودع</option>
+    <option>بناء</option>
   </select>
 
   <select id="area">
@@ -245,17 +255,40 @@ index.html
     <option>منطقة أخرى</option>
   </select>
 
-  <input id="price" type="text" placeholder="السعر">
+  <input id="address" type="text" placeholder="العنوان التفصيلي (الشارع، جانب...)">
+
+  <input id="price" type="text" placeholder="السعر *">
 
   <input id="size" type="text" placeholder="المساحة بالمتر">
 
-  <input id="phone" type="text" placeholder="رقم التواصل">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <input id="rooms" type="number" min="0" placeholder="عدد الغرف">
+    <input id="bathrooms" type="number" min="0" placeholder="عدد الحمامات">
+    <input id="floor" type="text" placeholder="الطابق">
+    <input id="year" type="text" placeholder="عمر/سنة البناء">
+  </div>
 
-  <textarea id="description" placeholder="اكتب تفاصيل العقار"></textarea>
+  <select id="furnished">
+    <option value="">التجهيز</option>
+    <option>مفروش</option>
+    <option>غير مفروش</option>
+    <option>نصف مفروش</option>
+  </select>
 
+  <input id="features" type="text" placeholder="المميزات (مصعد، كراج، تدفئة، إطلالة...)">
+
+  <input id="phone" type="text" placeholder="رقم التواصل *">
+
+  <input id="contactName" type="text" placeholder="اسم صاحب الإعلان / المكتب">
+
+  <textarea id="description" placeholder="الوصف الكامل للعقار"></textarea>
+
+  <label style="display:block;text-align:right;margin:8px 0;font-weight:bold">📷 صور العقار</label>
   <input id="image" type="file" accept="image/*">
 
-  <button class="publish-btn" onclick="addProperty()">
+  <input id="video" type="text" placeholder="رابط فيديو العقار (اختياري)">
+
+  <button class="publish-btn" id="publishBtn" onclick="addProperty()">
     نشر الإعلان
   </button>
 
@@ -372,252 +405,206 @@ async function loadProperties() {
 /* إضافة إعلان */
 
 async function addProperty() {
+  const title = document.getElementById("title").value.trim();
+  const purpose = document.getElementById("purpose").value;
+  const type = document.getElementById("type").value;
+  const area = document.getElementById("area").value;
+  const address = document.getElementById("address").value.trim();
+  const price = document.getElementById("price").value.trim();
+  const size = document.getElementById("size").value.trim();
+  const rooms = document.getElementById("rooms").value.trim();
+  const bathrooms = document.getElementById("bathrooms").value.trim();
+  const floor = document.getElementById("floor").value.trim();
+  const year = document.getElementById("year").value.trim();
+  const furnished = document.getElementById("furnished").value;
+  const features = document.getElementById("features").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const contactName = document.getElementById("contactName").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const video = document.getElementById("video").value.trim();
+  const imageInput = document.getElementById("image");
 
-  const title =
-    document.getElementById("title").value.trim();
-
-  const type =
-    document.getElementById("type").value;
-
-  const area =
-    document.getElementById("area").value;
-
-  const price =
-    document.getElementById("price").value.trim();
-
-  const size =
-    document.getElementById("size").value.trim();
-
-  const phone =
-    document.getElementById("phone").value.trim();
-
-  const description =
-    document.getElementById("description").value.trim();
-
-  const imageInput =
-    document.getElementById("image");
-
-
-  if (!title || !type || !area || !price || !phone) {
-
-    alert(
-      "يرجى تعبئة عنوان العقار والنوع والمنطقة والسعر ورقم التواصل"
-    );
-
+  if (!title || !purpose || !type || !area || !price || !phone) {
+    alert("يرجى تعبئة الحقول الأساسية: العملية، نوع العقار، العنوان، السعر ورقم التواصل.");
     return;
   }
 
+  const details = [
+    purpose && "العملية: " + purpose,
+    address && "العنوان: " + address,
+    rooms && "الغرف: " + rooms,
+    bathrooms && "الحمامات: " + bathrooms,
+    floor && "الطابق: " + floor,
+    year && "سنة/عمر البناء: " + year,
+    furnished && "التجهيز: " + furnished,
+    features && "المميزات: " + features,
+    contactName && "صاحب الإعلان: " + contactName,
+    video && "فيديو: " + video
+  ].filter(Boolean).join("\n");
+
+  const fullDescription = details + (description ? "\nالوصف: " + description : "");
 
   if (imageInput.files.length > 0) {
-
     const reader = new FileReader();
-
     reader.onload = async function(event) {
-
-      await createProperty(
-        event.target.result,
-        title,
-        type,
-        area,
-        price,
-        size,
-        phone,
-        description
-      );
-
+      await createProperty(event.target.result, title, type, area, price, size, phone, fullDescription);
     };
-
-    reader.readAsDataURL(
-      imageInput.files[0]
-    );
-
+    reader.readAsDataURL(imageInput.files[0]);
   } else {
-
-    await createProperty(
-      "",
-      title,
-      type,
-      area,
-      price,
-      size,
-      phone,
-      description
-    );
-
+    await createProperty("", title, type, area, price, size, phone, fullDescription);
   }
-
 }
 
-
-/* حفظ الإعلان في Supabase */
-
-async function createProperty(
-  image,
-  title,
-  type,
-  area,
-  price,
-  size,
-  phone,
-  description
-) {
-
+async function createProperty(image, title, type, area, price, size, phone, description) {
   let result;
   if (editingId) {
     const old = properties.find(p => p.id === editingId);
-    result = await supabaseClient.from("properties").update({title,type,area,price,size,phone,description,image:image || old?.image || ""}).eq("id",editingId).select().single();
+    result = await supabaseClient.from("properties")
+      .update({title,type,area,price,size,phone,description,image:image || old?.image || ""})
+      .eq("id",editingId).select().single();
   } else {
-    result = await supabaseClient.from("properties").insert([{title,type,area,price,size,phone,description,image}]).select().single();
+    result = await supabaseClient.from("properties")
+      .insert([{title,type,area,price,size,phone,description,image}]).select().single();
   }
+
   const data=result.data, error=result.error;
-
-
   if (error) {
-
     console.error(error);
-
-    alert(
-      "ما قدرنا نحفظ الإعلان. تأكد من الاتصال بالإنترنت."
-    );
-
+    alert("ما قدرنا نحفظ الإعلان. تأكد من الاتصال بالإنترنت.");
     return;
   }
 
-
-  if(editingId){ properties=properties.map(p=>p.id===editingId?data:p); editingId=null; } else properties.unshift(data);
+  const wasEditing = !!editingId;
+  if(wasEditing){
+    properties=properties.map(p=>p.id===editingId?data:p);
+    editingId=null;
+  } else {
+    properties.unshift(data);
+  }
 
   displayProperties(properties);
-
-
-  document.getElementById("formBox").style.display =
-    "none";
-
-
-  document.getElementById("title").value = "";
-  document.getElementById("type").value = "";
-  document.getElementById("area").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("size").value = "";
-  document.getElementById("phone").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("image").value = "";
-
-
-  displayProperties(properties); drawMarkers(properties); clearForm();
-  alert("تم حفظ الإعلان بنجاح ✅");
-
+  drawMarkers(properties);
+  clearForm();
+  document.getElementById("formBox").style.display="none";
+  document.getElementById("formTitle").textContent="إضافة إعلان عقاري";
+  document.getElementById("publishBtn").textContent="نشر الإعلان";
+  alert(wasEditing ? "تم تعديل الإعلان بنجاح ✅" : "تم نشر الإعلان بنجاح ✅");
 }
 
 
 /* عرض الإعلانات */
 
-function clearForm(){["title","price","size","phone","description"].forEach(id=>document.getElementById(id).value="");document.getElementById("type").value="";document.getElementById("area").value="";document.getElementById("image").value="";}
-function editProperty(id){const p=properties.find(x=>x.id===id);if(!p)return;editingId=id;document.getElementById("formBox").style.display="block";["title","price","size","phone","description"].forEach(k=>document.getElementById(k).value=p[k]||"");document.getElementById("type").value=p.type||"";document.getElementById("area").value=p.area||"";document.getElementById("formBox").scrollIntoView({behavior:"smooth"});}
-async function deleteProperty(id){if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;const {error}=await supabaseClient.from("properties").delete().eq("id",id);if(error){alert("تعذر حذف الإعلان. قد تكون صلاحية الحذف غير مفعلة.");return}properties=properties.filter(p=>p.id!==id);displayProperties(properties);drawMarkers(properties);}
-function drawMarkers(list){markers.forEach(m=>map.removeLayer(m));markers=[];list.forEach(p=>{const pos=areaCoords[p.area];if(pos){const m=L.marker(pos).addTo(map).bindPopup("<b>"+String(p.title||"").replace(/</g,"&lt;")+"</b><br>📍 "+String(p.area||"").replace(/</g,"&lt;"));markers.push(m)}})}
-function displayProperties(list) {
+function clearForm(){
+  ["title","address","price","size","rooms","bathrooms","floor","year","features","phone","contactName","description","video"].forEach(id=>document.getElementById(id).value="");
+  ["purpose","type","area","furnished"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("image").value="";
+}
 
-  const container =
-    document.getElementById("propertyList");
+function editProperty(id){
+  const p=properties.find(x=>x.id===id);
+  if(!p)return;
+  editingId=id;
+  document.getElementById("formBox").style.display="block";
+  document.getElementById("formTitle").textContent="✏️ تعديل الإعلان";
+  document.getElementById("publishBtn").textContent="حفظ التعديلات";
+  document.getElementById("title").value=p.title||"";
+  document.getElementById("type").value=p.type||"";
+  document.getElementById("area").value=p.area||"";
+  document.getElementById("price").value=p.price||"";
+  document.getElementById("size").value=p.size||"";
+  document.getElementById("phone").value=p.phone||"";
+  const lines=String(p.description||"").split("\n");
+  const get=(label)=>{const x=lines.find(v=>v.startsWith(label));return x?x.slice(label.length).trim():""};
+  document.getElementById("purpose").value=get("العملية: ");
+  document.getElementById("address").value=get("العنوان: ");
+  document.getElementById("rooms").value=get("الغرف: ");
+  document.getElementById("bathrooms").value=get("الحمامات: ");
+  document.getElementById("floor").value=get("الطابق: ");
+  document.getElementById("year").value=get("سنة/عمر البناء: ");
+  document.getElementById("furnished").value=get("التجهيز: ");
+  document.getElementById("features").value=get("المميزات: ");
+  document.getElementById("contactName").value=get("صاحب الإعلان: ");
+  document.getElementById("video").value=get("فيديو: ");
+  document.getElementById("description").value=get("الوصف: ");
+  document.getElementById("formBox").scrollIntoView({behavior:"smooth"});
+}
 
+async function deleteProperty(id){
+  if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;
+  const {error}=await supabaseClient.from("properties").delete().eq("id",id);
+  if(error){alert("تعذر حذف الإعلان. قد تكون صلاحية الحذف غير مفعلة.");return}
+  properties=properties.filter(p=>p.id!==id);
+  displayProperties(properties);
+  drawMarkers(properties);
+}
 
-  if (!list.length) {
-
-    container.innerHTML =
-      '<div class="empty">لا توجد إعلانات</div>';
-
-    return;
-  }
-
-
-  container.innerHTML = "";
-
-
-  list.forEach(function(property) {
-
-    const card =
-      document.createElement("div");
-
-    card.className = "card";
-
-
-    let imageHTML = "";
-
-
-    if (property.image) {
-
-      imageHTML =
-        '<img class="card-image" src="' +
-        property.image +
-        '" alt="صورة العقار">';
-
-    } else {
-
-      imageHTML =
-        '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:55px;">🏠</div>';
-
+function drawMarkers(list){
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  list.forEach(p=>{
+    const pos=areaCoords[p.area];
+    if(pos){
+      const m=L.marker(pos).addTo(map).bindPopup("<b>"+String(p.title||"").replace(/</g,"&lt;")+"</b><br>📍 "+String(p.area||"").replace(/</g,"&lt;"));
+      markers.push(m);
     }
-
-
-    const whatsappNumber =
-      String(property.phone || "")
-        .replace(/^0+/, "963");
-
-
-    card.innerHTML =
-
-      imageHTML +
-
-      '<div class="card-content">' +
-
-      '<h3>' +
-      property.title +
-      '</h3>' +
-
-      '<p>🏷️ النوع: ' +
-      property.type +
-      '</p>' +
-
-      '<p>📍 المنطقة: ' +
-      property.area +
-      '</p>' +
-
-      '<p>💰 السعر: ' +
-      property.price +
-      '</p>' +
-
-      '<p>📐 المساحة: ' +
-      (property.size || "غير محددة") +
-      '</p>' +
-
-      '<p>' +
-      (property.description || "") +
-      '</p>' +
-      '<div class="actions">' +
-      '<a class="contact" href="https://wa.me/' +
-whatsappNumber +
-'?text=' +
-encodeURIComponent(
-  'مرحباً، عم أتواصل معك بخصوص هذا العقار: ' +
-  property.title +
-  ' - ' +
-  property.area +
-  ' - السعر: ' +
-  property.price
-) +
-'" target="_blank">' +
-
-'📱 تواصل واتساب' +
-
-'</a>' +
-
-      '</div>';
-
-
-    container.appendChild(card);
-
   });
+}
 
+function displayProperties(list) {
+  const container=document.getElementById("propertyList");
+  if(!list.length){container.innerHTML='<div class="empty">لا توجد إعلانات مطابقة</div>';return;}
+  container.innerHTML="";
+  list.forEach(function(property){
+    const card=document.createElement("div");
+    card.className="card";
+    let imageHTML=property.image
+      ? '<img class="card-image" src="'+property.image+'" alt="صورة العقار">'
+      : '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:55px;">🏠</div>';
+
+    const whatsappNumber=String(property.phone||"").replace(/^0+/,"963");
+    const cleanPhone=String(property.phone||"").replace(/[^0-9+]/g,"");
+    const desc=String(property.description||"");
+    const lines=desc.split("\n").filter(Boolean);
+    const purpose=lines.find(x=>x.startsWith("العملية: "))?.slice(9)||"";
+    const address=lines.find(x=>x.startsWith("العنوان: "))?.slice(9)||"";
+    const rooms=lines.find(x=>x.startsWith("الغرف: "))?.slice(7)||"";
+    const bathrooms=lines.find(x=>x.startsWith("الحمامات: "))?.slice(10)||"";
+    const floor=lines.find(x=>x.startsWith("الطابق: "))?.slice(8)||"";
+    const furnished=lines.find(x=>x.startsWith("التجهيز: "))?.slice(9)||"";
+    const features=lines.find(x=>x.startsWith("المميزات: "))?.slice(10)||"";
+    const owner=lines.find(x=>x.startsWith("صاحب الإعلان: "))?.slice(14)||"";
+    const video=lines.find(x=>x.startsWith("فيديو: "))?.slice(7)||"";
+    const longDesc=lines.find(x=>x.startsWith("الوصف: "))?.slice(7)||"";
+
+    const detailRows=[
+      purpose&&"🔖 العملية: "+purpose,
+      "🏷️ النوع: "+(property.type||""),
+      "📍 المنطقة: "+(property.area||""),
+      address&&"🧭 العنوان: "+address,
+      "💰 السعر: "+(property.price||""),
+      property.size&&"📐 المساحة: "+property.size,
+      rooms&&"🛏️ الغرف: "+rooms,
+      bathrooms&&"🚿 الحمامات: "+bathrooms,
+      floor&&"🏢 الطابق: "+floor,
+      furnished&&"🛋️ التجهيز: "+furnished,
+      features&&"⭐ المميزات: "+features,
+      owner&&"👤 صاحب الإعلان: "+owner
+    ].filter(Boolean).map(x=>"<p>"+x+"</p>").join("");
+
+    card.innerHTML=imageHTML+
+      '<div class="card-content">'+
+      '<h3>'+String(property.title||"عقار").replace(/</g,"&lt;")+'</h3>'+
+      detailRows+
+      (longDesc?'<p style="white-space:pre-line">📝 '+longDesc.replace(/</g,"&lt;")+'</p>':"")+
+      '<div class="actions">'+
+      '<a class="contact" href="tel:'+cleanPhone+'">📞 اتصال</a>'+
+      '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك بخصوص هذا العقار: "+property.title+" - "+property.area+" - السعر: "+property.price)+'" target="_blank">📱 واتساب</a>'+
+      (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
+      (video?'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank">🎥 فيديو العقار</a>':"")+
+      '<button class="edit-btn" onclick="editProperty(\''+property.id+'\')">✏️ تعديل</button>'+
+      '<button class="delete-btn" onclick="deleteProperty(\''+property.id+'\')">🗑️ حذف</button>'+
+      '</div></div>';
+    container.appendChild(card);
+  });
 }
 
 
@@ -650,6 +637,10 @@ function searchProperties() {
         ||
 
         String(property.area || "")
+          .toLowerCase()
+          .includes(text)
+        ||
+        String(property.description || "")
           .toLowerCase()
           .includes(text);
 
