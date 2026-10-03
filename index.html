@@ -426,72 +426,64 @@ async function loadProperties() {
 /* إضافة إعلان */
 
 async function addProperty() {
-  const title = document.getElementById("title").value.trim();
-  const purpose = document.getElementById("purpose").value;
-  const type = document.getElementById("type").value;
-  const area = document.getElementById("area").value;
-  const address = document.getElementById("address").value.trim();
-  const price = document.getElementById("price").value.trim();
-  const size = document.getElementById("size").value.trim();
-  const rooms = document.getElementById("rooms").value.trim();
-  const bathrooms = document.getElementById("bathrooms").value.trim();
-  const floor = document.getElementById("floor").value.trim();
-  const year = document.getElementById("year").value.trim();
-  const furnished = document.getElementById("furnished").value;
-  const features = document.getElementById("features").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const contactName = document.getElementById("contactName").value.trim();
-  const description = document.getElementById("description").value.trim();
-  const videoInput = document.getElementById("video");
-  const imageInput = document.getElementById("image");
+  const title=document.getElementById("title").value.trim();
+  const purpose=document.getElementById("purpose").value;
+  const type=document.getElementById("type").value;
+  const area=document.getElementById("area").value;
+  const address=document.getElementById("address").value.trim();
+  const price=document.getElementById("price").value.trim();
+  const size=document.getElementById("size").value.trim();
+  const rooms=document.getElementById("rooms").value.trim();
+  const bathrooms=document.getElementById("bathrooms").value.trim();
+  const floor=document.getElementById("floor").value.trim();
+  const year=document.getElementById("year").value.trim();
+  const furnished=document.getElementById("furnished").value;
+  const features=document.getElementById("features").value.trim();
+  const phone=document.getElementById("phone").value.trim();
+  const contactName=document.getElementById("contactName").value.trim();
+  const description=document.getElementById("description").value.trim();
+  const videoInput=document.getElementById("video");
+  const imageInput=document.getElementById("image");
 
-  if (!title || !purpose || !type || !area || !price || !phone) {
+  if(!title||!purpose||!type||!area||!price||!phone){
     alert("يرجى تعبئة الحقول الأساسية: العملية، نوع العقار، العنوان، السعر ورقم التواصل.");
     return;
   }
 
-  const details = [
-    purpose && "العملية: " + purpose,
-    address && "العنوان: " + address,
-    rooms && "الغرف: " + rooms,
-    bathrooms && "الحمامات: " + bathrooms,
-    floor && "الطابق: " + floor,
-    year && "سنة/عمر البناء: " + year,
-    furnished && "التجهيز: " + furnished,
-    features && "المميزات: " + features,
-    contactName && "صاحب الإعلان: " + contactName
+  const details=[
+    purpose&&"العملية: "+purpose,
+    address&&"العنوان: "+address,
+    rooms&&"الغرف: "+rooms,
+    bathrooms&&"الحمامات: "+bathrooms,
+    floor&&"الطابق: "+floor,
+    year&&"سنة/عمر البناء: "+year,
+    furnished&&"التجهيز: "+furnished,
+    features&&"المميزات: "+features,
+    contactName&&"صاحب الإعلان: "+contactName
   ].filter(Boolean).join("\n");
 
-  const saveWithVideo = async (videoData) => {
-    const fullDescription = details + (videoData ? "\nفيديو: " + videoData : "") + (description ? "\nالوصف: " + description : "");
-    if (imageInput.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = async function(event) {
-        await createProperty(event.target.result, title, type, area, price, size, phone, fullDescription);
-      };
+  const saveWithFiles=async(videoData)=>{
+    const fullDescription=details+(videoData?"\nفيديو: "+videoData:"")+(description?"\nالوصف: "+description:"");
+    if(imageInput.files.length>0){
+      const reader=new FileReader();
+      reader.onload=async e=>await createProperty(e.target.result,title,type,area,price,size,phone,fullDescription);
       reader.readAsDataURL(imageInput.files[0]);
-    } else {
-      await createProperty("", title, type, area, price, size, phone, fullDescription);
+    }else{
+      await createProperty("",title,type,area,price,size,phone,fullDescription);
     }
   };
 
-  if (videoInput.files.length > 0) {
-    const videoFile = videoInput.files[0];
-    if (videoFile.size > 20 * 1024 * 1024) {
+  if(videoInput.files.length>0){
+    const videoFile=videoInput.files[0];
+    if(videoFile.size>20*1024*1024){
       alert("الفيديو كبير جداً. الحد الأقصى للفيديو حالياً 20 ميغابايت.");
       return;
     }
-    const videoReader = new FileReader();
-    videoReader.onload = async function(event) { await saveWithVideo(event.target.result); };
-    videoReader.readAsDataURL(videoFile);
-  } else {
-    const reader = new FileReader();
-    reader.onload = async function(event) {
-      await createProperty(event.target.result, title, type, area, price, size, phone, fullDescription);
-    };
-    reader.readAsDataURL(imageInput.files[0]);
-  } else {
-    await createProperty("", title, type, area, price, size, phone, fullDescription);
+    const reader=new FileReader();
+    reader.onload=async e=>await saveWithFiles(e.target.result);
+    reader.readAsDataURL(videoFile);
+  }else{
+    await saveWithFiles("");
   }
 }
 
