@@ -481,9 +481,10 @@ async function addProperty() {
       });
     }
 
-    // أولاً نحفظ الإعلان بدون الفيديو حتى لا يضيع الإعلان إذا تعطل رفع الفيديو.
-    const saved=await createProperty(imageData,title,type,area,price,size,phone,fullDescription, null, true);
-    if(!saved || !saved.id) throw new Error("تعذر حفظ الإعلان");
+    // نرفع الفيديو أولاً ثم نحفظ رابط الفيديو مع الإعلان نفسه.
+    // هذا يتجنب خطوة UPDATE المنفصلة التي كانت تسبب رسالة "تعذر ربط الفيديو".
+    let videoUrl=null;
+    let uploadedVideoPath=null;
 
     if(videoInput.files.length){
       const videoFile=videoInput.files[0];
@@ -491,6 +492,7 @@ async function addProperty() {
 
       const ext=(videoFile.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
       const path="property-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+      uploadedVideoPath=path;
       btn.textContent="⏳ جارٍ رفع الفيديو...";
 
       const upload=await new Promise((resolve,reject)=>{
@@ -509,11 +511,14 @@ async function addProperty() {
         tusUpload.findPreviousUploads().then(previous=>{if(previous.length)tusUpload.resumeFromPreviousUpload(previous[0]);tusUpload.start();}).catch(reject);
       });
       if(upload.error) throw new Error("تعذر رفع الفيديو: "+upload.error.message);
+      videoUrl=supabaseClient.storage.from("property-videos").getPublicUrl(path).data.publicUrl;
+    }
 
-      const publicUrl=supabaseClient.storage.from("property-videos").getPublicUrl(path).data.publicUrl;
-      const upd=await supabaseClient.from("properties").update({video_url:publicUrl}).eq("id",saved.id).select().single();
-      if(upd.error) throw new Error("تم حفظ الإعلان لكن تعذر ربط الفيديو: "+upd.error.message);
-      properties=properties.map(p=>String(p.id)===String(saved.id)?upd.data:p);
+    const saved=await createProperty(imageData,title,type,area,price,size,phone,fullDescription, videoUrl, true);
+    if(!saved || !saved.id) throw new Error("تعذر حفظ الإعلان");
+
+    if(videoUrl){
+      properties=properties.map(p=>String(p.id)===String(saved.id)?Object.assign({},p,saved):p);
       displayProperties(properties);
       drawMarkers(properties);
     }
