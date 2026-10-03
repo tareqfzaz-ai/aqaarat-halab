@@ -642,6 +642,14 @@ function displayProperties(list) {
 }
 
 
+document.addEventListener("click",function(ev){
+  const btn=ev.target.closest("[data-action]");
+  if(!btn)return;
+  const id=btn.getAttribute("data-id");
+  if(btn.getAttribute("data-action")==="edit") window.editProperty(id);
+  else if(btn.getAttribute("data-action")==="delete") window.deleteProperty(id);
+});
+
 /* البحث */
 
 window.openImageModal = function(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;img.src=src;modal.style.display="flex";}
