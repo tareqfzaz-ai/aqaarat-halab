@@ -462,46 +462,53 @@ async function addProperty() {
     contactName&&"صاحب الإعلان: "+contactName
   ].filter(Boolean).join("\n");
 
-  const saveWithFiles=async(videoData)=>{
-    const fullDescription=details+(videoData?"\nفيديو: "+videoData:"")+(description?"\nالوصف: "+description:"");
+  const saveWithFiles=async(videoUrl)=>{
+    const fullDescription=details+(description?"\nالوصف: "+description:"");
     if(imageInput.files.length>0){
       const reader=new FileReader();
-      reader.onload=async e=>await createProperty(e.target.result,title,type,area,price,size,phone,fullDescription);
+      reader.onload=async e=>await createProperty(e.target.result,title,type,area,price,size,phone,fullDescription,videoUrl);
       reader.readAsDataURL(imageInput.files[0]);
     }else{
-      await createProperty("",title,type,area,price,size,phone,fullDescription);
+      await createProperty("",title,type,area,price,size,phone,fullDescription,videoUrl);
     }
   };
 
   if(videoInput.files.length>0){
     const videoFile=videoInput.files[0];
-    if(videoFile.size>20*1024*1024){
-      alert("الفيديو كبير جداً. الحد الأقصى للفيديو حالياً 20 ميغابايت.");
+    if(videoFile.size>50*1024*1024){
+      alert("الفيديو كبير جداً. الحد الأقصى للفيديو حالياً 50 ميغابايت.");
       return;
     }
-    const reader=new FileReader();
-    reader.onload=async e=>await saveWithFiles(e.target.result);
-    reader.readAsDataURL(videoFile);
+    const ext=(videoFile.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
+    const path="property-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+    const upload=await supabaseClient.storage.from("property-videos").upload(path,videoFile,{contentType:videoFile.type||"video/mp4",upsert:false});
+    if(upload.error){
+      console.error(upload.error);
+      alert("تعذر رفع الفيديو. جرّب فيديو أصغر أو تأكد من اتصال الإنترنت.");
+      return;
+    }
+    const publicUrl=supabaseClient.storage.from("property-videos").getPublicUrl(path).data.publicUrl;
+    await saveWithFiles(publicUrl);
   }else{
     await saveWithFiles("");
   }
 }
 
-async function createProperty(image, title, type, area, price, size, phone, description) {
+async function createProperty(image, title, type, area, price, size, phone, description, videoUrl) {
   let result;
   if (editingId === importedProperty.id) {
     const old = properties.find(p => p.id === editingId) || importedProperty;
-    importedProperty = Object.assign({}, old, {title,type,area,price,size,phone,description,image:image || old?.image || ""});
+    importedProperty = Object.assign({}, old, {title,type,area,price,size,phone,description,image:image || old?.image || "",video_url:videoUrl || old?.video_url || ""});
     localStorage.setItem("aqaarat_imported_property", JSON.stringify(importedProperty));
     result = {data: importedProperty, error: null};
   } else if (editingId) {
     const old = properties.find(p => p.id === editingId);
     result = await supabaseClient.from("properties")
-      .update({title,type,area,price,size,phone,description,image:image || old?.image || ""})
+      .update({title,type,area,price,size,phone,description,image:image || old?.image || "",video_url:videoUrl || old?.video_url || ""})
       .eq("id",editingId).select().single();
   } else {
     result = await supabaseClient.from("properties")
-      .insert([{title,type,area,price,size,phone,description,image}]).select().single();
+      .insert([{title,type,area,price,size,phone,description,image,video_url:videoUrl||null}]).select().single();
   }
 
   const data=result.data, error=result.error;
@@ -631,7 +638,7 @@ function displayProperties(list) {
     const furnished=lines.find(x=>x.startsWith("التجهيز: "))?.slice(9)||"";
     const features=lines.find(x=>x.startsWith("المميزات: "))?.slice(10)||"";
     const owner=lines.find(x=>x.startsWith("صاحب الإعلان: "))?.slice(14)||"";
-    const video=lines.find(x=>x.startsWith("فيديو: "))?.slice(7)||"";
+    const video=property.video_url || lines.find(x=>x.startsWith("فيديو: "))?.slice(7)||"";
     const longDesc=lines.find(x=>x.startsWith("الوصف: "))?.slice(7)||"";
 
     const detailRows=[
