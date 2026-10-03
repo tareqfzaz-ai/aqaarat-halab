@@ -295,9 +295,21 @@ index.html
 
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
+const SUPABASE_URL = "https://kypzypsonkzfrhpldtmp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-";
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
 let properties = [];
+
 
 function openForm() {
 
@@ -313,10 +325,40 @@ function openForm() {
   });
 }
 
-function addProperty() {
+
+/* تحميل الإعلانات المحفوظة */
+
+async function loadProperties() {
+
+  const { data, error } =
+    await supabaseClient
+      .from("properties")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
+
+  if (error) {
+
+    console.error(error);
+
+    alert("حدث خطأ أثناء تحميل الإعلانات");
+
+    return;
+  }
+
+  properties = data || [];
+
+  displayProperties(properties);
+}
+
+
+/* إضافة إعلان */
+
+async function addProperty() {
 
   const title =
-    document.getElementById("title").value;
+    document.getElementById("title").value.trim();
 
   const type =
     document.getElementById("type").value;
@@ -325,34 +367,38 @@ function addProperty() {
     document.getElementById("area").value;
 
   const price =
-    document.getElementById("price").value;
+    document.getElementById("price").value.trim();
 
   const size =
-    document.getElementById("size").value;
+    document.getElementById("size").value.trim();
 
   const phone =
-    document.getElementById("phone").value;
+    document.getElementById("phone").value.trim();
 
   const description =
-    document.getElementById("description").value;
+    document.getElementById("description").value.trim();
 
   const imageInput =
     document.getElementById("image");
 
+
   if (!title || !type || !area || !price || !phone) {
 
-    alert("يرجى تعبئة عنوان العقار والنوع والمنطقة والسعر ورقم التواصل");
+    alert(
+      "يرجى تعبئة عنوان العقار والنوع والمنطقة والسعر ورقم التواصل"
+    );
 
     return;
   }
+
 
   if (imageInput.files.length > 0) {
 
     const reader = new FileReader();
 
-    reader.onload = function(event) {
+    reader.onload = async function(event) {
 
-      createProperty(
+      await createProperty(
         event.target.result,
         title,
         type,
@@ -365,11 +411,13 @@ function addProperty() {
 
     };
 
-    reader.readAsDataURL(imageInput.files[0]);
+    reader.readAsDataURL(
+      imageInput.files[0]
+    );
 
   } else {
 
-    createProperty(
+    await createProperty(
       "",
       title,
       type,
@@ -384,7 +432,10 @@ function addProperty() {
 
 }
 
-function createProperty(
+
+/* حفظ الإعلان في Supabase */
+
+async function createProperty(
   image,
   title,
   type,
@@ -395,24 +446,45 @@ function createProperty(
   description
 ) {
 
-  const property = {
+  const { data, error } =
+    await supabaseClient
+      .from("properties")
+      .insert([{
 
-    image,
-    title,
-    type,
-    area,
-    price,
-    size,
-    phone,
-    description
+        title: title,
+        type: type,
+        area: area,
+        price: price,
+        size: size,
+        phone: phone,
+        description: description,
+        image: image
 
-  };
+      }])
+      .select()
+      .single();
 
-  properties.unshift(property);
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "ما قدرنا نحفظ الإعلان. تأكد من الاتصال بالإنترنت."
+    );
+
+    return;
+  }
+
+
+  properties.unshift(data);
 
   displayProperties(properties);
 
-  document.getElementById("formBox").style.display = "none";
+
+  document.getElementById("formBox").style.display =
+    "none";
+
 
   document.getElementById("title").value = "";
   document.getElementById("type").value = "";
@@ -423,16 +495,21 @@ function createProperty(
   document.getElementById("description").value = "";
   document.getElementById("image").value = "";
 
-  alert("تمت إضافة الإعلان بنجاح");
+
+  alert("تم حفظ الإعلان بنجاح ✅");
 
 }
+
+
+/* عرض الإعلانات */
 
 function displayProperties(list) {
 
   const container =
     document.getElementById("propertyList");
 
-  if (list.length === 0) {
+
+  if (!list.length) {
 
     container.innerHTML =
       '<div class="empty">لا توجد إعلانات</div>';
@@ -440,7 +517,9 @@ function displayProperties(list) {
     return;
   }
 
+
   container.innerHTML = "";
+
 
   list.forEach(function(property) {
 
@@ -449,7 +528,9 @@ function displayProperties(list) {
 
     card.className = "card";
 
+
     let imageHTML = "";
+
 
     if (property.image) {
 
@@ -465,8 +546,11 @@ function displayProperties(list) {
 
     }
 
+
     const whatsappNumber =
-      property.phone.replace(/^0+/, "963");
+      String(property.phone || "")
+        .replace(/^0+/, "963");
+
 
     card.innerHTML =
 
@@ -508,11 +592,15 @@ function displayProperties(list) {
 
       '</div>';
 
+
     container.appendChild(card);
 
   });
 
 }
+
+
+/* البحث */
 
 function searchProperties() {
 
@@ -522,36 +610,49 @@ function searchProperties() {
       .value
       .toLowerCase();
 
+
   const type =
     document
       .getElementById("searchType")
       .value;
 
+
   const filtered =
     properties.filter(function(property) {
 
       const matchesText =
-        property.title
-          .toLowerCase()
-          .includes(text) ||
 
-        property.area
+        String(property.title || "")
+          .toLowerCase()
+          .includes(text)
+
+        ||
+
+        String(property.area || "")
           .toLowerCase()
           .includes(text);
+
 
       const matchesType =
         !type ||
         property.type === type;
 
+
       return matchesText && matchesType;
 
     });
+
 
   displayProperties(filtered);
 
 }
 
-</script>
+
+/* تشغيل تحميل الإعلانات عند فتح الموقع */
+
+loadProperties();
+
+  </script>
 
 </body>
 </html>
