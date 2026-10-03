@@ -364,13 +364,14 @@ const supabaseClient =
   );
 
 let properties = [];
-const importedProperty = {
+const importedPropertyDefault = {
   id: "whatsapp-1539",
   title: "شقة للبيع سوبر ديلوكس - سيف الدولة",
   type: "شقة", area: "سيف الدولة", price: "75,000 دولار + بازار", size: "120 م²",
   phone: "0957839713", image: "",
   description: "العملية: بيع\nالعنوان: سيف الدولة - مفرق شماسي - قريب سنتر الفهد\nالغرف: 4 غرف محررات\nالطابق: الثاني أمامي\nالمميزات: قبلي شمالي • سوبر ديلوكس • 8 ألواح طاقة شمسية + بطارية ليثيوم • خزان 2000 لتر على السطح • جاهز للسكن\nصاحب الإعلان: مكتب الظاظا للخدمات العقارية في حلب وسوريا"
 };
+let importedProperty = JSON.parse(localStorage.getItem("aqaarat_imported_property") || "null") || importedPropertyDefault;
 
 let editingId = null;
 const areaCoords = {"سيف الدولة":[36.1967,37.1438],"الأعظمية":[36.1918,37.1455],"الحمدانية":[36.165,37.115],"الجميلية":[36.205,37.157],"الزهراء":[36.232,37.166],"الفرقان":[36.218,37.145],"الموكامبو":[36.218,37.174],"الشهباء":[36.24,37.18],"ريف حلب":[36.25,37.1]};
@@ -413,7 +414,8 @@ async function loadProperties() {
     return;
   }
 
-  properties = [importedProperty, ...(data || []).filter(p => p.id !== importedProperty.id)];
+  const hiddenImported = localStorage.getItem("aqaarat_imported_deleted") === "1";
+  properties = hiddenImported ? (data || []) : [importedProperty, ...(data || []).filter(p => p.id !== importedProperty.id)];
 
   displayProperties(properties); drawMarkers(properties);
 }
@@ -474,7 +476,12 @@ async function addProperty() {
 
 async function createProperty(image, title, type, area, price, size, phone, description) {
   let result;
-  if (editingId) {
+  if (editingId === importedProperty.id) {
+    const old = properties.find(p => p.id === editingId) || importedProperty;
+    importedProperty = Object.assign({}, old, {title,type,area,price,size,phone,description,image:image || old?.image || ""});
+    localStorage.setItem("aqaarat_imported_property", JSON.stringify(importedProperty));
+    result = {data: importedProperty, error: null};
+  } else if (editingId) {
     const old = properties.find(p => p.id === editingId);
     result = await supabaseClient.from("properties")
       .update({title,type,area,price,size,phone,description,image:image || old?.image || ""})
@@ -518,6 +525,7 @@ function clearForm(){
 }
 
 function editProperty(id){
+  if(id === importedProperty.id) localStorage.removeItem("aqaarat_imported_deleted");
   const p=properties.find(x=>x.id===id);
   if(!p)return;
   editingId=id;
@@ -548,6 +556,14 @@ function editProperty(id){
 
 async function deleteProperty(id){
   if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;
+  if(id === importedProperty.id){
+    localStorage.setItem("aqaarat_imported_deleted","1");
+    properties=properties.filter(p=>p.id!==id);
+    displayProperties(properties);
+    drawMarkers(properties);
+    alert("تم حذف الإعلان بنجاح ✅");
+    return;
+  }
   const {error}=await supabaseClient.from("properties").delete().eq("id",id);
   if(error){alert("تعذر حذف الإعلان. قد تكون صلاحية الحذف غير مفعلة.");return}
   properties=properties.filter(p=>p.id!==id);
