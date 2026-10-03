@@ -583,12 +583,21 @@ function displayProperties(list) {
       '</p>' +
 
       '<a class="contact" href="https://wa.me/' +
-      whatsappNumber +
-      '" target="_blank">' +
+whatsappNumber +
+'?text=' +
+encodeURIComponent(
+  'مرحباً، عم أتواصل معك بخصوص هذا العقار: ' +
+  property.title +
+  ' - ' +
+  property.area +
+  ' - السعر: ' +
+  property.price
+) +
+'" target="_blank">' +
 
-      '📱 تواصل واتساب' +
+'📱 تواصل واتساب' +
 
-      '</a>' +
+'</a>' +
 
       '</div>';
 
