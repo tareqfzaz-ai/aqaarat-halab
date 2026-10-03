@@ -198,6 +198,8 @@ index.html
       color: #777;
     }
   </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>#map{height:330px;max-width:1100px;margin:20px auto;border-radius:15px;box-shadow:0 3px 12px #ccc}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.map-btn,.edit-btn,.delete-btn{display:block;text-align:center;padding:10px;border:0;border-radius:8px;text-decoration:none;font-weight:bold}.map-btn{background:#eee;color:#222}.edit-btn{background:#d4af37;color:#111}.delete-btn{background:#f1d4d4;color:#9b111e}</style>
 </head>
 
 <body>
@@ -259,6 +261,7 @@ index.html
 
 </div>
 
+<h2 style="text-align:center;margin:25px 0 10px">📍 خريطة حلب العقارية</h2><div id="map"></div>
 <section class="search">
 
   <input
@@ -305,6 +308,7 @@ index.html
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
@@ -318,6 +322,9 @@ const supabaseClient =
   );
 
 let properties = [];
+let editingId = null;
+const areaCoords = {"سيف الدولة":[36.1967,37.1438],"الأعظمية":[36.1918,37.1455],"الحمدانية":[36.165,37.115],"الجميلية":[36.205,37.157],"الزهراء":[36.232,37.166],"الفرقان":[36.218,37.145],"الموكامبو":[36.218,37.174],"الشهباء":[36.24,37.18],"ريف حلب":[36.25,37.1]};
+const map=L.map("map").setView([36.2021,37.1343],12); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map); let markers=[];
 
 
 function openForm() {
@@ -358,7 +365,7 @@ async function loadProperties() {
 
   properties = data || [];
 
-  displayProperties(properties);
+  displayProperties(properties); drawMarkers(properties);
 }
 
 
@@ -455,23 +462,14 @@ async function createProperty(
   description
 ) {
 
-  const { data, error } =
-    await supabaseClient
-      .from("properties")
-      .insert([{
-
-        title: title,
-        type: type,
-        area: area,
-        price: price,
-        size: size,
-        phone: phone,
-        description: description,
-        image: image
-
-      }])
-      .select()
-      .single();
+  let result;
+  if (editingId) {
+    const old = properties.find(p => p.id === editingId);
+    result = await supabaseClient.from("properties").update({title,type,area,price,size,phone,description,image:image || old?.image || ""}).eq("id",editingId).select().single();
+  } else {
+    result = await supabaseClient.from("properties").insert([{title,type,area,price,size,phone,description,image}]).select().single();
+  }
+  const data=result.data, error=result.error;
 
 
   if (error) {
@@ -486,7 +484,7 @@ async function createProperty(
   }
 
 
-  properties.unshift(data);
+  if(editingId){ properties=properties.map(p=>p.id===editingId?data:p); editingId=null; } else properties.unshift(data);
 
   displayProperties(properties);
 
@@ -505,6 +503,7 @@ async function createProperty(
   document.getElementById("image").value = "";
 
 
+  displayProperties(properties); drawMarkers(properties); clearForm();
   alert("تم حفظ الإعلان بنجاح ✅");
 
 }
@@ -512,6 +511,10 @@ async function createProperty(
 
 /* عرض الإعلانات */
 
+function clearForm(){["title","price","size","phone","description"].forEach(id=>document.getElementById(id).value="");document.getElementById("type").value="";document.getElementById("area").value="";document.getElementById("image").value="";}
+function editProperty(id){const p=properties.find(x=>x.id===id);if(!p)return;editingId=id;document.getElementById("formBox").style.display="block";["title","price","size","phone","description"].forEach(k=>document.getElementById(k).value=p[k]||"");document.getElementById("type").value=p.type||"";document.getElementById("area").value=p.area||"";document.getElementById("formBox").scrollIntoView({behavior:"smooth"});}
+async function deleteProperty(id){if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;const {error}=await supabaseClient.from("properties").delete().eq("id",id);if(error){alert("تعذر حذف الإعلان. قد تكون صلاحية الحذف غير مفعلة.");return}properties=properties.filter(p=>p.id!==id);displayProperties(properties);drawMarkers(properties);}
+function drawMarkers(list){markers.forEach(m=>map.removeLayer(m));markers=[];list.forEach(p=>{const pos=areaCoords[p.area];if(pos){const m=L.marker(pos).addTo(map).bindPopup("<b>"+String(p.title||"").replace(/</g,"&lt;")+"</b><br>📍 "+String(p.area||"").replace(/</g,"&lt;"));markers.push(m)}})}
 function displayProperties(list) {
 
   const container =
@@ -590,7 +593,7 @@ function displayProperties(list) {
       '<p>' +
       (property.description || "") +
       '</p>' +
-
+      '<div class="actions">' +
       '<a class="contact" href="https://wa.me/' +
 whatsappNumber +
 '?text=' +
