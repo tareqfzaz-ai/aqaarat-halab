@@ -644,7 +644,7 @@ function displayProperties(list) {
       (longDesc?'<p style="white-space:pre-line">📝 '+longDesc.replace(/</g,"&lt;")+'</p>':"")+
       '<div class="actions">'+
       '<a class="contact" href="tel:'+cleanPhone+'">📞 اتصال</a>'+
-      '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك بخصوص هذا العقار: "+property.title+" - "+property.area+" - السعر: "+property.price)+'" target="_blank">📱 واتساب</a>'+
+      '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك من منصة عقارات حلب الظاظا بخصوص هذا العرض.\n\nالعقار: "+property.title+"\nالمنطقة: "+property.area+"\nالسعر: "+property.price+"\n\nرابط العرض:\n"+window.location.origin+window.location.pathname+"?property="+encodeURIComponent(String(property.id)))+'" target="_blank" rel="noopener noreferrer">📱 واتساب</a>'+
       (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
       (video?'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank">🎥 فيديو العقار</a>':"")+
       '<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
