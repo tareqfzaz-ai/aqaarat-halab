@@ -525,10 +525,15 @@ function clearForm(){
   document.getElementById("image").value="";
 }
 
-window.editProperty = function(id){
+window.editProperty = async function(id){
   if(id === importedProperty.id) localStorage.removeItem("aqaarat_imported_deleted");
-  const p=properties.find(x=>x.id===id);
-  if(!p)return;
+  let p=properties.find(x=>String(x.id)===String(id));
+  if(!p && id !== importedProperty.id){
+    const {data,error}=await supabaseClient.from("properties").select("*").eq("id",id).maybeSingle();
+    if(error){ console.error(error); alert("تعذر تحميل الإعلان للتعديل. حاول مرة ثانية."); return; }
+    p=data;
+  }
+  if(!p){ alert("لم يتم العثور على الإعلان."); return; }
   editingId=id;
   document.getElementById("formBox").style.display="block";
   document.getElementById("formTitle").textContent="✏️ تعديل الإعلان";
