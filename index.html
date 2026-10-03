@@ -323,6 +323,8 @@ index.html
 
 </section>
 
+<div class="image-modal" id="imageModal" onclick="closeImageModal()"><span class="close">×</span><img id="modalImage" src="" alt="صورة العقار" onclick="event.stopPropagation()"></div>
+
 <div class="container">
 
   <h2 class="title">🏠 أحدث العقارات</h2>
@@ -572,7 +574,7 @@ function displayProperties(list) {
     const card=document.createElement("div");
     card.className="card";
     let imageHTML=property.image
-      ? '<img class="card-image" src="'+property.image+'" alt="صورة العقار">'
+      ? '<img class="card-image" src="'+property.image+'" alt="صورة العقار" onclick="openImageModal(this.src)">'
       : '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:55px;">🏠</div>';
 
     const whatsappNumber=String(property.phone||"").replace(/^0+/,"963");
@@ -625,6 +627,8 @@ function displayProperties(list) {
 
 /* البحث */
 
+function openImageModal(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;img.src=src;modal.style.display="flex";}
+function closeImageModal(){document.getElementById("imageModal").style.display="none";document.getElementById("modalImage").src="";}
 function searchProperties() {
 
   const text =
