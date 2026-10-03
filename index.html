@@ -362,6 +362,14 @@ const supabaseClient =
   );
 
 let properties = [];
+const importedProperty = {
+  id: "whatsapp-1539",
+  title: "شقة للبيع سوبر ديلوكس - سيف الدولة",
+  type: "شقة", area: "سيف الدولة", price: "75,000 دولار + بازار", size: "120 م²",
+  phone: "0957839713", image: "",
+  description: "العملية: بيع\nالعنوان: سيف الدولة - مفرق شماسي - قريب سنتر الفهد\nالغرف: 4 غرف محررات\nالطابق: الثاني أمامي\nالمميزات: قبلي شمالي • سوبر ديلوكس • 8 ألواح طاقة شمسية + بطارية ليثيوم • خزان 2000 لتر على السطح • جاهز للسكن\nصاحب الإعلان: مكتب الظاظا للخدمات العقارية في حلب وسوريا"
+};
+
 let editingId = null;
 const areaCoords = {"سيف الدولة":[36.1967,37.1438],"الأعظمية":[36.1918,37.1455],"الحمدانية":[36.165,37.115],"الجميلية":[36.205,37.157],"الزهراء":[36.232,37.166],"الفرقان":[36.218,37.145],"الموكامبو":[36.218,37.174],"الشهباء":[36.24,37.18],"ريف حلب":[36.25,37.1]};
 const map=L.map("map").setView([36.2021,37.1343],12); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map); let markers=[];
@@ -403,7 +411,7 @@ async function loadProperties() {
     return;
   }
 
-  properties = data || [];
+  properties = [importedProperty, ...(data || []).filter(p => p.id !== importedProperty.id)];
 
   displayProperties(properties); drawMarkers(properties);
 }
