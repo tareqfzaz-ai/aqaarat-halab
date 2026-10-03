@@ -293,7 +293,8 @@ index.html
   <label style="display:block;text-align:right;margin:8px 0;font-weight:bold">📷 صور العقار</label>
   <input id="image" type="file" accept="image/*">
 
-  <input id="video" type="text" placeholder="رابط فيديو العقار (اختياري)">
+  <label style="display:block;text-align:right;margin:8px 0;font-weight:bold">🎥 فيديو العقار (اختياري)</label>
+  <input id="video" type="file" accept="video/*">
 
   <button class="publish-btn" id="publishBtn" onclick="addProperty()">
     نشر الإعلان
@@ -441,7 +442,7 @@ async function addProperty() {
   const phone = document.getElementById("phone").value.trim();
   const contactName = document.getElementById("contactName").value.trim();
   const description = document.getElementById("description").value.trim();
-  const video = document.getElementById("video").value.trim();
+  const videoInput = document.getElementById("video");
   const imageInput = document.getElementById("image");
 
   if (!title || !purpose || !type || !area || !price || !phone) {
@@ -458,13 +459,32 @@ async function addProperty() {
     year && "سنة/عمر البناء: " + year,
     furnished && "التجهيز: " + furnished,
     features && "المميزات: " + features,
-    contactName && "صاحب الإعلان: " + contactName,
-    video && "فيديو: " + video
+    contactName && "صاحب الإعلان: " + contactName
   ].filter(Boolean).join("\n");
 
-  const fullDescription = details + (description ? "\nالوصف: " + description : "");
+  const saveWithVideo = async (videoData) => {
+    const fullDescription = details + (videoData ? "\nفيديو: " + videoData : "") + (description ? "\nالوصف: " + description : "");
+    if (imageInput.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = async function(event) {
+        await createProperty(event.target.result, title, type, area, price, size, phone, fullDescription);
+      };
+      reader.readAsDataURL(imageInput.files[0]);
+    } else {
+      await createProperty("", title, type, area, price, size, phone, fullDescription);
+    }
+  };
 
-  if (imageInput.files.length > 0) {
+  if (videoInput.files.length > 0) {
+    const videoFile = videoInput.files[0];
+    if (videoFile.size > 20 * 1024 * 1024) {
+      alert("الفيديو كبير جداً. الحد الأقصى للفيديو حالياً 20 ميغابايت.");
+      return;
+    }
+    const videoReader = new FileReader();
+    videoReader.onload = async function(event) { await saveWithVideo(event.target.result); };
+    videoReader.readAsDataURL(videoFile);
+  } else {
     const reader = new FileReader();
     reader.onload = async function(event) {
       await createProperty(event.target.result, title, type, area, price, size, phone, fullDescription);
@@ -520,7 +540,7 @@ async function createProperty(image, title, type, area, price, size, phone, desc
 /* عرض الإعلانات */
 
 function clearForm(){
-  ["title","address","price","size","rooms","bathrooms","floor","year","features","phone","contactName","description","video"].forEach(id=>document.getElementById(id).value="");
+  ["title","address","price","size","rooms","bathrooms","floor","year","features","phone","contactName","description"].forEach(id=>document.getElementById(id).value="");
   ["purpose","type","area","furnished"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("image").value="";
 }
@@ -555,7 +575,7 @@ window.editProperty = async function(id){
   document.getElementById("furnished").value=get("التجهيز: ");
   document.getElementById("features").value=get("المميزات: ");
   document.getElementById("contactName").value=get("صاحب الإعلان: ");
-  document.getElementById("video").value=get("فيديو: ");
+  document.getElementById("video").value="";
   document.getElementById("description").value=get("الوصف: ");
   document.getElementById("formBox").scrollIntoView({behavior:"smooth"});
 }
@@ -646,7 +666,7 @@ function displayProperties(list) {
       '<a class="contact" href="tel:'+cleanPhone+'">📞 اتصال</a>'+
       '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك من منصة عقارات حلب الظاظا بخصوص هذا العرض.\n\nالعقار: "+property.title+"\nالمنطقة: "+property.area+"\nالسعر: "+property.price+"\n\nرابط العرض:\n"+window.location.origin+window.location.pathname+"?property="+encodeURIComponent(String(property.id)))+'" target="_blank" rel="noopener noreferrer">📱 واتساب</a>'+
       (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
-      (video?'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank">🎥 فيديو العقار</a>':"")+
+      (video?((video.startsWith("data:video/")?'<video class="card-image" controls preload="metadata" src="'+video+'"></video>':'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener noreferrer">🎥 فيديو العقار</a>')):"")
       '<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
       '<button type="button" class="delete-btn" data-action="delete" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">🗑️ حذف</button>'+
       '</div></div>';
