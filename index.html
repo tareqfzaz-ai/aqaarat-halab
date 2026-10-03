@@ -599,8 +599,7 @@ function displayProperties(list) {
       ? '<img class="card-image" src="'+property.image+'" alt="صورة العقار" onclick="openImageModal(this.src)">'
       : '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:55px;">🏠</div>';
 
-    const whatsappNumber=String(property.phone||"").replace(/^0+/,"963");
-    const cleanPhone=String(property.phone||"").replace(/[^0-9+]/g,"");
+    // توحيد رقم الهاتف السوري بصيغة واتساب الدولية: 09xxxxxxxx -> 9639xxxxxxxx\n    const rawPhone=String(property.phone||"").trim();\n    let digits=rawPhone.replace(/[^0-9]/g,"");\n    if(digits.startsWith("00")) digits=digits.slice(2);\n    if(digits.startsWith("0")) digits="963"+digits.slice(1);\n    else if(digits.startsWith("9") && digits.length===9) digits="963"+digits;\n    else if(!digits.startsWith("963")) digits="963"+digits;\n    const whatsappNumber=digits;\n    const cleanPhone=digits;
     const desc=String(property.description||"");
     const lines=desc.split("\n").filter(Boolean);
     const purpose=lines.find(x=>x.startsWith("العملية: "))?.slice(9)||"";
