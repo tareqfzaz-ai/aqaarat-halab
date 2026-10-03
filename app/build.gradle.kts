@@ -1,6 +1,7 @@
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font
+import java.awt.Polygon
 import java.awt.RenderingHints
 import java.awt.font.TextLayout
 import java.awt.image.BufferedImage
@@ -53,13 +54,12 @@ val generateLauncherIcon = tasks.register("generateLauncherIcon") {
         g.stroke = BasicStroke(10f)
         g.drawRoundRect(12, 12, 488, 488, 60, 60)
 
-        val house = intArrayOf(95, 245, 256, 95, 417, 245, 417, 390, 95, 390)
-        val roof = java.awt.Polygon(intArrayOf(95, 256, 417), intArrayOf(245, 95, 245), 3)
+        val roof = Polygon(intArrayOf(95, 256, 417), intArrayOf(245, 95, 245), 3)
         g.fillPolygon(roof)
         g.fillRect(95, 245, 322, 145)
 
         g.color = black
-        g.fillPolygon(java.awt.Polygon(intArrayOf(150, 256, 362), intArrayOf(255, 157, 255), 3))
+        g.fillPolygon(Polygon(intArrayOf(150, 256, 362), intArrayOf(255, 157, 255), 3))
         g.fillRect(150, 255, 212, 105)
 
         g.color = gold
@@ -78,7 +78,7 @@ val generateLauncherIcon = tasks.register("generateLauncherIcon") {
         g.font = Font("DejaVu Sans", Font.BOLD, 50)
         val layout = TextLayout(text, g.font, g.fontRenderContext)
         val bounds = layout.bounds
-        val tx = (512f - bounds.width) / 2f - bounds.x
+        val tx = ((512f - bounds.width) / 2f - bounds.x).toFloat()
         layout.draw(g, tx, 468f)
 
         g.dispose()
