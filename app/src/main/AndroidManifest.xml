@@ -3,9 +3,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:theme="@style/Theme.Aqaarat"
-        android:label="عقارات الظاظا"
-        android:icon="@drawable/ic_splash"
-        android:roundIcon="@drawable/ic_splash"
+        android:label="&#x639;&#x642;&#x627;&#x631;&#x627;&#x62A; &#x627;&#x644;&#x638;&#x627;&#x638;&#x627;"
+        android:icon="@drawable/ic_launcher_text"
+        android:roundIcon="@drawable/ic_launcher_text"
         android:allowBackup="true"
         android:supportsRtl="true"
         android:usesCleartextTraffic="false">
