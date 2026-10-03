@@ -634,8 +634,8 @@ function displayProperties(list) {
       '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك بخصوص هذا العقار: "+property.title+" - "+property.area+" - السعر: "+property.price)+'" target="_blank">📱 واتساب</a>'+
       (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
       (video?'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank">🎥 فيديو العقار</a>':"")+
-      '<button class="edit-btn" onclick="editProperty(\''+property.id+'\')">✏️ تعديل</button>'+
-      '<button class="delete-btn" onclick="deleteProperty(\''+property.id+'\')">🗑️ حذف</button>'+
+      '<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
+      '<button type="button" class="delete-btn" data-action="delete" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">🗑️ حذف</button>'+
       '</div></div>';
     container.appendChild(card);
   });
