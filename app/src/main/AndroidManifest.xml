@@ -4,6 +4,8 @@
     <application
         android:theme="@style/Theme.Aqaarat"
         android:label="عقارات الظاظا"
+        android:icon="@drawable/ic_splash"
+        android:roundIcon="@drawable/ic_splash"
         android:allowBackup="true"
         android:supportsRtl="true"
         android:usesCleartextTraffic="false">
