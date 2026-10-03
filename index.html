@@ -563,6 +563,7 @@ function clearForm(){
   ["title","address","price","size","rooms","bathrooms","floor","year","features","phone","contactName","description"].forEach(id=>document.getElementById(id).value="");
   ["purpose","type","area","furnished"].forEach(id=>document.getElementById(id).value="");
   document.getElementById("image").value="";
+  document.getElementById("video").value="";
 }
 
 window.editProperty = async function(id){
@@ -762,7 +763,7 @@ loadProperties();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js?v=15").then(reg=>reg.update()).catch(console.error);
+    navigator.serviceWorker.register("./sw.js?v=16").then(reg=>reg.update()).catch(console.error);
   });
 }
 
