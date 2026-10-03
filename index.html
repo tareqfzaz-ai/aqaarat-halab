@@ -349,6 +349,7 @@ index.html
 
 </footer>
 
+<!-- v3: buttons + fresh cache -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -524,7 +525,7 @@ function clearForm(){
   document.getElementById("image").value="";
 }
 
-function editProperty(id){
+window.editProperty = function(id){
   if(id === importedProperty.id) localStorage.removeItem("aqaarat_imported_deleted");
   const p=properties.find(x=>x.id===id);
   if(!p)return;
@@ -554,7 +555,7 @@ function editProperty(id){
   document.getElementById("formBox").scrollIntoView({behavior:"smooth"});
 }
 
-async function deleteProperty(id){
+window.deleteProperty = async function(id){
   if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;
   if(id === importedProperty.id){
     localStorage.setItem("aqaarat_imported_deleted","1");
@@ -643,9 +644,9 @@ function displayProperties(list) {
 
 /* البحث */
 
-function openImageModal(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;img.src=src;modal.style.display="flex";}
-function closeImageModal(){document.getElementById("imageModal").style.display="none";document.getElementById("modalImage").src="";}
-function searchProperties() {
+window.openImageModal = function(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;img.src=src;modal.style.display="flex";}
+window.closeImageModal = function(){document.getElementById("imageModal").style.display="none";document.getElementById("modalImage").src="";}
+window.searchProperties = function() {
 
   const text =
     document
