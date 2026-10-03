@@ -426,6 +426,8 @@ async function loadProperties() {
 /* إضافة إعلان */
 
 async function addProperty() {
+  const btn=document.getElementById("publishBtn");
+  if(btn.disabled)return;
   const title=document.getElementById("title").value.trim();
   const purpose=document.getElementById("purpose").value;
   const type=document.getElementById("type").value;
@@ -446,55 +448,81 @@ async function addProperty() {
   const imageInput=document.getElementById("image");
 
   if(!title||!purpose||!type||!area||!price||!phone){
-    alert("يرجى تعبئة الحقول الأساسية: العملية، نوع العقار، العنوان، السعر ورقم التواصل.");
+    alert("يرجى تعبئة الحقول الأساسية: العملية، نوع العقار، المنطقة، السعر ورقم التواصل.");
     return;
   }
 
-  const details=[
-    purpose&&"العملية: "+purpose,
-    address&&"العنوان: "+address,
-    rooms&&"الغرف: "+rooms,
-    bathrooms&&"الحمامات: "+bathrooms,
-    floor&&"الطابق: "+floor,
-    year&&"سنة/عمر البناء: "+year,
-    furnished&&"التجهيز: "+furnished,
-    features&&"المميزات: "+features,
-    contactName&&"صاحب الإعلان: "+contactName
-  ].filter(Boolean).join("\n");
+  btn.disabled=true;
+  const oldBtnText=btn.textContent;
+  btn.textContent="⏳ جارٍ الحفظ...";
 
-  const saveWithFiles=async(videoUrl)=>{
+  try{
+    const details=[
+      purpose&&"العملية: "+purpose,
+      address&&"العنوان: "+address,
+      rooms&&"الغرف: "+rooms,
+      bathrooms&&"الحمامات: "+bathrooms,
+      floor&&"الطابق: "+floor,
+      year&&"سنة/عمر البناء: "+year,
+      furnished&&"التجهيز: "+furnished,
+      features&&"المميزات: "+features,
+      contactName&&"صاحب الإعلان: "+contactName
+    ].filter(Boolean).join("\n");
     const fullDescription=details+(description?"\nالوصف: "+description:"");
-    if(imageInput.files.length>0){
-      const reader=new FileReader();
-      reader.onload=async e=>await createProperty(e.target.result,title,type,area,price,size,phone,fullDescription,videoUrl);
-      reader.readAsDataURL(imageInput.files[0]);
-    }else{
-      await createProperty("",title,type,area,price,size,phone,fullDescription,videoUrl);
-    }
-  };
 
-  if(videoInput.files.length>0){
-    const videoFile=videoInput.files[0];
-    if(videoFile.size>50*1024*1024){
-      alert("الفيديو كبير جداً. الحد الأقصى للفيديو حالياً 50 ميغابايت.");
-      return;
+    let imageData="";
+    if(imageInput.files.length){
+      imageData=await new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.onerror=()=>reject(new Error("تعذر قراءة صورة العقار"));
+        reader.readAsDataURL(imageInput.files[0]);
+      });
     }
-    const ext=(videoFile.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
-    const path="property-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
-    const upload=await supabaseClient.storage.from("property-videos").upload(path,videoFile,{contentType:videoFile.type||"video/mp4",upsert:false});
-    if(upload.error){
-      console.error(upload.error);
-      alert("تعذر رفع الفيديو. جرّب فيديو أصغر أو تأكد من اتصال الإنترنت.");
-      return;
+
+    // أولاً نحفظ الإعلان بدون الفيديو حتى لا يضيع الإعلان إذا تعطل رفع الفيديو.
+    const saved=await createProperty(imageData,title,type,area,price,size,phone,fullDescription, null, true);
+    if(!saved || !saved.id) throw new Error("تعذر حفظ الإعلان");
+
+    if(videoInput.files.length){
+      const videoFile=videoInput.files[0];
+      if(videoFile.size>50*1024*1024) throw new Error("الفيديو أكبر من 50 ميغابايت");
+
+      const ext=(videoFile.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
+      const path="property-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+      btn.textContent="⏳ جارٍ رفع الفيديو...";
+
+      const upload=await supabaseClient.storage.from("property-videos").upload(path,videoFile,{
+        contentType:videoFile.type||"video/mp4",
+        cacheControl:"3600",
+        upsert:false
+      });
+      if(upload.error) throw new Error("تعذر رفع الفيديو: "+upload.error.message);
+
+      const publicUrl=supabaseClient.storage.from("property-videos").getPublicUrl(path).data.publicUrl;
+      const upd=await supabaseClient.from("properties").update({video_url:publicUrl}).eq("id",saved.id).select().single();
+      if(upd.error) throw new Error("تم حفظ الإعلان لكن تعذر ربط الفيديو: "+upd.error.message);
+      properties=properties.map(p=>String(p.id)===String(saved.id)?upd.data:p);
+      displayProperties(properties);
+      drawMarkers(properties);
     }
-    const publicUrl=supabaseClient.storage.from("property-videos").getPublicUrl(path).data.publicUrl;
-    await saveWithFiles(publicUrl);
-  }else{
-    await saveWithFiles("");
+
+    editingId=null;
+    clearForm();
+    document.getElementById("formBox").style.display="none";
+    document.getElementById("formTitle").textContent="إضافة إعلان عقاري";
+    btn.textContent="نشر الإعلان";
+    alert(videoInput.files.length ? "تم نشر الإعلان والفيديو بنجاح ✅" : "تم نشر الإعلان بنجاح ✅");
+  }catch(err){
+    console.error(err);
+    alert(err && err.message ? err.message : "ما قدرنا نحفظ الإعلان. حاول مرة ثانية.");
+  }finally{
+    btn.disabled=false;
+    if(btn.textContent.startsWith("⏳")) btn.textContent=oldBtnText;
   }
 }
 
-async function createProperty(image, title, type, area, price, size, phone, description, videoUrl) {
+async function createProperty(image, title, type, area, price, size, phone, description, videoUrl, keepFormOpen) {
   let result;
   if (editingId === importedProperty.id) {
     const old = properties.find(p => p.id === editingId) || importedProperty;
@@ -504,7 +532,7 @@ async function createProperty(image, title, type, area, price, size, phone, desc
   } else if (editingId) {
     const old = properties.find(p => p.id === editingId);
     result = await supabaseClient.from("properties")
-      .update({title,type,area,price,size,phone,description,image:image || old?.image || "",video_url:videoUrl || old?.video_url || ""})
+      .update({title,type,area,price,size,phone,description,image:image || old?.image || "",video_url:videoUrl || old?.video_url || null})
       .eq("id",editingId).select().single();
   } else {
     result = await supabaseClient.from("properties")
@@ -514,25 +542,18 @@ async function createProperty(image, title, type, area, price, size, phone, desc
   const data=result.data, error=result.error;
   if (error) {
     console.error(error);
-    alert("ما قدرنا نحفظ الإعلان. تأكد من الاتصال بالإنترنت.");
-    return;
+    throw new Error("ما قدرنا نحفظ الإعلان: "+(error.message||"خطأ غير معروف"));
   }
 
   const wasEditing = !!editingId;
   if(wasEditing){
-    properties=properties.map(p=>p.id===editingId?data:p);
-    editingId=null;
+    properties=properties.map(p=>String(p.id)===String(editingId)?data:p);
   } else {
     properties.unshift(data);
   }
-
   displayProperties(properties);
   drawMarkers(properties);
-  clearForm();
-  document.getElementById("formBox").style.display="none";
-  document.getElementById("formTitle").textContent="إضافة إعلان عقاري";
-  document.getElementById("publishBtn").textContent="نشر الإعلان";
-  alert(wasEditing ? "تم تعديل الإعلان بنجاح ✅" : "تم نشر الإعلان بنجاح ✅");
+  return data;
 }
 
 
