@@ -353,6 +353,7 @@ index.html
 <!-- v4: reliable edit/delete buttons + fresh cache -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js"></script>
 
 <script>
 
@@ -492,10 +493,20 @@ async function addProperty() {
       const path="property-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
       btn.textContent="⏳ جارٍ رفع الفيديو...";
 
-      const upload=await supabaseClient.storage.from("property-videos").upload(path,videoFile,{
-        contentType:videoFile.type||"video/mp4",
-        cacheControl:"3600",
-        upsert:false
+      const upload=await new Promise((resolve,reject)=>{
+        const tusUpload=new tus.Upload(videoFile,{
+          endpoint:"https://kypzypsonkzfrhpldtmp.storage.supabase.co/storage/v1/upload/resumable",
+          retryDelays:[0,3000,5000,10000,20000],
+          headers:{apikey:SUPABASE_KEY,authorization:"Bearer "+SUPABASE_KEY,"x-upsert":"false"},
+          uploadDataDuringCreation:true,
+          removeFingerprintOnSuccess:true,
+          chunkSize:6*1024*1024,
+          metadata:{bucketName:"property-videos",objectName:path,contentType:videoFile.type||"video/mp4",cacheControl:"3600"},
+          onError:error=>reject(new Error(error?.message||"تعذر رفع الفيديو")),
+          onProgress:(uploaded,total)=>{btn.textContent="⏳ رفع الفيديو "+Math.round(uploaded/total*100)+"%..."},
+          onSuccess:()=>resolve({error:null})
+        });
+        tusUpload.findPreviousUploads().then(previous=>{if(previous.length)tusUpload.resumeFromPreviousUpload(previous[0]);tusUpload.start();}).catch(reject);
       });
       if(upload.error) throw new Error("تعذر رفع الفيديو: "+upload.error.message);
 
@@ -763,7 +774,7 @@ loadProperties();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js?v=16").then(reg=>reg.update()).catch(console.error);
+    navigator.serviceWorker.register("./sw.js?v=17").then(reg=>reg.update()).catch(console.error);
   });
 }
 
