@@ -658,8 +658,7 @@ function displayProperties(list) {
       '<a class="contact" href="tel:'+cleanPhone+'">📞 اتصال</a>'+
       '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك من منصة عقارات حلب الظاظا بخصوص هذا العرض.\n\nالعقار: "+property.title+"\nالمنطقة: "+property.area+"\nالسعر: "+property.price+"\n\nرابط العرض:\n"+window.location.origin+window.location.pathname+"?property="+encodeURIComponent(String(property.id)))+'" target="_blank" rel="noopener noreferrer">📱 واتساب</a>'+
       (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
-      (video?((video.startsWith("data:video/")?'<video class="card-image" controls preload="metadata" src="'+video+'"></video>':'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener noreferrer">🎥 فيديو العقار</a>')):"")+\
-      '<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
+      (video?((video.startsWith("data:video/")?'<video class="card-image" controls preload="metadata" src="'+video+'"></video>':'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener noreferrer">🎥 فيديو العقار</a>')):"")+'<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
       '<button type="button" class="delete-btn" data-action="delete" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">🗑️ حذف</button>'+
       '</div></div>';
     container.appendChild(card);
