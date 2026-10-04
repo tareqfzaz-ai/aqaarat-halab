@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0d">
+<title>استوديو فيديو AI</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#0b0b0d;color:#fff}
+.wrap{max-width:1050px;margin:auto;padding:18px}.hero{padding:28px 0 18px;text-align:center}
+.logo{display:inline-flex;width:62px;height:62px;border-radius:18px;align-items:center;justify-content:center;background:linear-gradient(135deg,#d4af37,#fff0a3);color:#111;font-size:30px;box-shadow:0 8px 30px #0008}
+h1{font-size:32px;margin:14px 0 7px}.sub{color:#aaa;font-size:15px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.card{background:#151519;border:1px solid #29292f;border-radius:20px;padding:18px;box-shadow:0 12px 35px #0005}
+label{display:block;margin:13px 0 7px;color:#ddd;font-weight:bold;font-size:14px}
+textarea,input,select{width:100%;background:#0f0f12;color:#fff;border:1px solid #33343b;border-radius:12px;padding:13px;font-size:15px;outline:none}
+textarea{min-height:145px;resize:vertical}input[type=file]{padding:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid #3b3b42;padding:9px 12px;border-radius:999px;background:#101014;cursor:pointer}.chip.active{border-color:#d4af37;color:#d4af37}
+button{border:0;border-radius:12px;padding:13px 17px;font-weight:bold;cursor:pointer}.generate{width:100%;margin-top:16px;background:linear-gradient(135deg,#d4af37,#f4d978);color:#111;font-size:17px}.secondary{background:#25252b;color:#fff}
+.preview{min-height:430px;border-radius:16px;background:linear-gradient(145deg,#1e1e24,#0f0f12);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.preview img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:.72}.overlay{position:absolute;inset:0;background:linear-gradient(transparent 45%,#000d);display:flex;align-items:end;padding:22px}.caption{font-size:20px;font-weight:bold}
+.status{margin-top:12px;color:#aaa;font-size:13px;text-align:center}.badge{display:inline-block;padding:6px 9px;border-radius:8px;background:#24242a;color:#d4af37;margin-bottom:10px}
+.notice{margin-top:18px;padding:12px;border-radius:12px;background:#211e12;border:1px solid #514719;color:#e9db9a;font-size:13px;line-height:1.7}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.preview{min-height:330px}.wrap{padding:12px}h1{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="logo">✦</div>
+  <h1>استوديو فيديو AI</h1>
+  <div class="sub">أنشئ فيديوهات إعلانية من وصفك أو من صور عقارك</div>
+</header>
+
+<div class="grid">
+<section class="card">
+  <span class="badge">AI VIDEO MAKER</span>
+  <label>شو بدك يظهر بالفيديو؟</label>
+  <textarea id="prompt" placeholder="مثال: فيديو عقاري فاخر لشقة 120 متر في سيف الدولة، لقطات سينمائية للصالون وغرف النوم، إضاءة دافئة، حركة كاميرا ناعمة، مناسب للفيسبوك وواتساب..."></textarea>
+
+  <label>صورة العقار (اختياري)</label>
+  <input id="image" type="file" accept="image/*">
+
+  <label>نمط الفيديو</label>
+  <div class="chips" id="styles">
+    <span class="chip active" data-v="سينمائي">سينمائي</span>
+    <span class="chip" data-v="واقعي">واقعي</span>
+    <span class="chip" data-v="إعلاني">إعلاني</span>
+    <span class="chip" data-v="فاخر">فاخر</span>
+  </div>
+
+  <div class="row">
+    <div><label>المقاس</label><select id="ratio"><option value="9:16">عمودي 9:16</option><option value="16:9">أفقي 16:9</option><option value="1:1">مربع 1:1</option></select></div>
+    <div><label>المدة</label><select id="duration"><option>5 ثواني</option><option>10 ثواني</option><option>15 ثانية</option></select></div>
+  </div>
+
+  <button class="generate" id="generate">✨ إنشاء فيديو بالذكاء الاصطناعي</button>
+  <div class="status" id="status">جاهز للإنشاء</div>
+  <div class="notice">ملاحظة: واجهة التطبيق جاهزة. تشغيل مولّد فيديو AI فعلي يحتاج ربط مفتاح API لخدمة مثل Kling أو Runway من خلال خادم آمن، وليس وضع المفتاح داخل الصفحة.</div>
+</section>
+
+<section class="card">
+  <span class="badge">المعاينة</span>
+  <div class="preview" id="preview">
+    <div style="text-align:center;color:#777">ستظهر معاينة الفيديو هنا</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <button class="secondary" style="flex:1" id="clear">مسح</button>
+    <button class="secondary" style="flex:1" id="copy">نسخ وصف الفيديو</button>
+  </div>
+</section>
+</div>
+</div>
+
+<script>
+let selectedStyle='سينمائي';
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');selectedStyle=c.dataset.v});
+const img=document.getElementById('image'), preview=document.getElementById('preview'), status=document.getElementById('status');
+img.onchange=()=>{const f=img.files[0];if(!f)return;const url=URL.createObjectURL(f);preview.innerHTML='<img src="'+url+'"><div class="overlay"><div class="caption">'+(document.getElementById('prompt').value||'فيديو عقاري بالذكاء الاصطناعي')+'</div></div>'};
+document.getElementById('generate').onclick=()=>{const p=document.getElementById('prompt').value.trim();if(!p){alert('اكتب وصف الفيديو أولاً');return}status.textContent='جاري تجهيز طلب الفيديو...';setTimeout(()=>{status.textContent='الواجهة جاهزة — يلزم ربط مزوّد AI لإنتاج ملف MP4 فعلي.'},900)};
+document.getElementById('clear').onclick=()=>{img.value='';preview.innerHTML='<div style="text-align:center;color:#777">ستظهر معاينة الفيديو هنا</div>';status.textContent='جاهز للإنشاء'};
+document.getElementById('copy').onclick=async()=>{const p=document.getElementById('prompt').value.trim();const full=p+' | النمط: '+selectedStyle+' | المقاس: '+document.getElementById('ratio').value+' | المدة: '+document.getElementById('duration').value;try{await navigator.clipboard.writeText(full);status.textContent='تم نسخ وصف الفيديو'}catch(e){status.textContent='لم يتمكن المتصفح من النسخ'}};
+</script>
+</body>
+</html>
