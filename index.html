@@ -772,7 +772,7 @@ document.addEventListener("click",function(ev){
 
 /* البحث */
 
-window.openImageModal = function(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;img.src=src;modal.style.display="flex";}
+window.openImageModal = function(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;modal.hidden=false;img.src=src;modal.style.display="flex";}
 window.closeImageModal = function(){document.getElementById("imageModal").style.display="none";document.getElementById("modalImage").src="";}
 window.searchProperties = function() {
 
