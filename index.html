@@ -832,8 +832,11 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
     ["التفاصيل", document.getElementById("requestDetails").value.trim()],
     ["رقم الزبون", document.getElementById("requestContact").value.trim()]
   ];
-  const message = "طلب عقار جديد - شبكة عقارات الظاظا%0A" + fields.map(([k,v])=>encodeURIComponent(k)+": "+encodeURIComponent(v)).join("%0A");
-  window.open("https://wa.me/?text="+message, "_blank");
+  const message = "طلب عقار جديد - شبكة عقارات الظاظا\\n" +
+    fields.map(([k,v]) => k + ": " + (v || "لم يحدد")).join("\\n");
+  // رقم واتساب بزنس الظاظا: 0957839713 بصيغة دولية من دون الصفر الأول
+  const officeWhatsApp = "963957839713";
+  window.location.href = "https://wa.me/" + officeWhatsApp + "?text=" + encodeURIComponent(message);
 });
 </script>
 </body>
