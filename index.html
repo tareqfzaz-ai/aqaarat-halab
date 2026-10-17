@@ -220,7 +220,16 @@ index.html
 .request-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.request-form input,.request-form select,.request-form textarea{width:100%;min-width:0;padding:13px;border:1px solid #d6dce7;border-radius:10px;font:inherit;background:#fff}.request-form textarea{grid-column:1/-1;min-height:85px}.request-form button{grid-column:1/-1;background:#101b35;color:#f1d48a;border:0;border-radius:10px;padding:14px;font:inherit;font-weight:bold;cursor:pointer}.request-form small{grid-column:1/-1;color:#667085}
 @media(max-width:560px){.hero{min-height:310px;padding:24px 18px}.request-form{grid-template-columns:1fr}.request-form textarea,.request-form button,.request-form small{grid-column:1}}
 </style>
-</head>
+<style>
+[hidden]{display:none!important}
+.home-menu{max-width:900px;margin:24px auto;padding:20px 16px;text-align:center}
+.home-menu h2{color:#101b35;margin-bottom:8px}.home-menu>p{color:#59657a;margin-bottom:18px;line-height:1.7}
+.menu-card{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;max-width:620px;margin:12px auto;padding:22px 16px;border:1px solid #e2bd63;border-radius:18px;background:linear-gradient(135deg,#fff,#f7f3e7);color:#101b35;box-shadow:0 5px 16px rgba(16,27,53,.09);cursor:pointer;font:inherit}
+.menu-card span{font-size:36px}.menu-card strong{font-size:20px}.menu-card small{font-size:14px;color:#59657a;line-height:1.6}
+.view-nav{position:sticky;top:0;z-index:999;background:#101b35;color:#f1d48a;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 10px #0002}
+.view-nav button{background:#e2bd63;border:0;border-radius:9px;padding:10px 13px;font-weight:bold;color:#101b35}
+.view-nav span{font-weight:bold}
+</style></head>
 
 <body>
 
@@ -237,6 +246,15 @@ index.html
     <a href="#propertyRequests" class="hero-btn">🔎 اطلب العقار الذي تبحث عنه</a>
   </div>
 </section>
+
+<nav id="homeMenu" class="home-menu" aria-label="الأقسام الرئيسية">
+  <h2>أهلاً بك في شبكة عقارات الظاظا</h2>
+  <p>اختار شو بدك تعمل، وكل قسم بيفتح لحاله بدون ما تضطر تنزل بين كل الأقسام.</p>
+  <button type="button" class="menu-card" onclick="showAppView('request')"><span>🔎</span><strong>طلب عقار</strong><small>اطلب بيت أو عقار بالمواصفات اللي بدك ياها</small></button>
+  <button type="button" class="menu-card" onclick="showAppView('browse')"><span>🏘️</span><strong>تصفّح العقارات</strong><small>شوف الإعلانات والأسعار والمناطق</small></button>
+  <button type="button" class="menu-card" onclick="showAppView('add')"><span>➕</span><strong>إضافة إعلان عقاري</strong><small>أضف عقارك أو إعلانك</small></button>
+</nav>
+<div id="viewNav" class="view-nav" hidden><button type="button" onclick="goHome()">← رجوع للأقسام الرئيسية</button><span id="viewTitle">القسم</span></div>
 
 <section id="propertyRequests" class="request-section">
   <h2>ما لقيت العقار المناسب؟</h2>
@@ -840,5 +858,34 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
   window.location.href = "https://wa.me/" + officeWhatsApp + "?text=" + encodeURIComponent(message);
 });
 </script>
-</body>
+<script>
+(function(){
+ const request=document.querySelector(".request-section");
+ const addSection=document.querySelector(".add-section");
+ const formBox=document.getElementById("formBox");
+ const mapHeading=[...document.querySelectorAll("h2")].find(el=>el.textContent.includes("خريطة حلب العقارية"));
+ const map=document.getElementById("map");
+ const search=document.querySelector(".search");
+ const imageModal=document.getElementById("imageModal");
+ const container=document.querySelector(".container");
+ function hideAll(){[request,addSection,formBox,mapHeading,map,search,imageModal,container].forEach(el=>{if(el)el.hidden=true;});}
+ window.showAppView=function(name){
+  hideAll();
+  document.getElementById("homeMenu").hidden=true;
+  document.getElementById("viewNav").hidden=false;
+  const titles={request:"طلب عقار",browse:"تصفّح العقارات",add:"إضافة إعلان عقاري"};
+  document.getElementById("viewTitle").textContent=titles[name]||"القسم";
+  if(name==="request"&&request)request.hidden=false;
+  if(name==="add"){if(addSection)addSection.hidden=false;if(formBox){formBox.hidden=false;formBox.style.display="block";}}
+  if(name==="browse"){[mapHeading,map,search,container].forEach(el=>{if(el)el.hidden=false;});if(window.map)setTimeout(()=>window.map.invalidateSize(),150);}
+  window.scrollTo({top:0,behavior:"smooth"});
+ };
+ window.goHome=function(){
+  hideAll();document.getElementById("viewNav").hidden=true;document.getElementById("homeMenu").hidden=false;
+  if(formBox)formBox.style.display="none";
+  window.scrollTo({top:0,behavior:"smooth"});
+ };
+ hideAll();
+})();
+</script></body>
 </html>
