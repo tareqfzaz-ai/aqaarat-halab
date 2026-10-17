@@ -4,16 +4,16 @@ index.html
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>عقارات الظاظا</title>
+  <title>شركة عقارات الظاظا | شبكة عقارات الظاظا</title>
   <meta property="og:image" content="https://tareqfzaz-ai.github.io/aqaarat-halab/cover.png">
-  <meta property="og:title" content="عقارات الظاظا">
-  <meta property="og:description" content="منصة عقارية للإعلانات في حلب">
+  <meta property="og:title" content="شبكة عقارات الظاظا">
+  <meta property="og:description" content="شبكة عقارات الظاظا — بيع وشراء وإيجار في حلب">
   <meta property="og:type" content="website">
 <meta property="og:url" content="https://tareqfzaz-ai.github.io/aqaarat-halab/">
 <meta property="og:image:width" content="1000">
 <meta property="og:image:height" content="563">
   <meta property="og:image:type" content="image/png">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#101b35">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -31,13 +31,13 @@ index.html
     }
 
     body {
-      background: #f5f5f5;
+      background: #f4f6fb;
       color: #222;
     }
 
     header {
-      background: #111;
-      color: #d4af37;
+      background: #101b35;
+      color: #e2bd63;
       text-align: center;
       padding: 25px 15px;
     }
@@ -59,7 +59,7 @@ index.html
     }
 
     .add-btn {
-      background: #d4af37;
+      background: #e2bd63;
       color: #111;
       border: none;
       padding: 14px 28px;
@@ -82,7 +82,7 @@ index.html
     .form-box h2 {
       text-align: center;
       margin-bottom: 20px;
-      color: #b28b18;
+      color: #b1842c;
     }
 
     .form-box input,
@@ -207,14 +207,51 @@ index.html
   </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>#map{height:65px;width:60%;max-width:360px;margin:10px auto;border-radius:10px;box-shadow:0 2px 8px #ccc}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.map-btn,.edit-btn,.delete-btn{display:block;text-align:center;padding:10px;border:0;border-radius:8px;text-decoration:none;font-weight:bold}.map-btn{background:#eee;color:#222}.edit-btn{background:#d4af37;color:#111}.delete-btn{background:#f1d4d4;color:#9b111e}</style>
+
+<style>
+.brand-header{background:linear-gradient(120deg,#0b1429,#17294a 65%,#263a5e);padding:28px 16px 30px;border-bottom:3px solid #e2bd63}
+.brand-pill{display:inline-block;border:1px solid #e2bd63;border-radius:30px;padding:6px 14px;color:#f5df9d;font-size:13px;margin-bottom:12px}
+.brand-header h1{font-size:clamp(27px,5vw,42px);line-height:1.4;color:#f1d48a}
+.brand-header p{max-width:700px;margin:8px auto 0;color:#fff}
+.hero{min-height:330px;display:flex;align-items:center;padding:28px 7%;background:linear-gradient(90deg,rgba(9,17,34,.88),rgba(9,17,34,.38)),url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=85') center/cover}
+.hero-copy{max-width:560px;color:white}.hero-copy span{color:#f1d48a;font-weight:bold}.hero-copy h2{font-size:clamp(30px,5vw,48px);line-height:1.35;margin:12px 0}.hero-copy p{font-size:17px;line-height:1.8;margin-bottom:20px}.hero-btn{display:inline-block;background:#e2bd63;color:#101b35;text-decoration:none;font-weight:bold;padding:13px 20px;border-radius:12px}
+.request-section{max-width:850px;margin:26px auto;padding:24px 18px;background:#fff;border:1px solid #e4e8f0;border-radius:18px;box-shadow:0 8px 28px rgba(16,27,53,.08);text-align:center}
+.request-section h2{color:#101b35;margin-bottom:8px}.request-section>p{color:#59657a;line-height:1.8;margin-bottom:16px}
+.request-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.request-form input,.request-form select,.request-form textarea{width:100%;min-width:0;padding:13px;border:1px solid #d6dce7;border-radius:10px;font:inherit;background:#fff}.request-form textarea{grid-column:1/-1;min-height:85px}.request-form button{grid-column:1/-1;background:#101b35;color:#f1d48a;border:0;border-radius:10px;padding:14px;font:inherit;font-weight:bold;cursor:pointer}.request-form small{grid-column:1/-1;color:#667085}
+@media(max-width:560px){.hero{min-height:310px;padding:24px 18px}.request-form{grid-template-columns:1fr}.request-form textarea,.request-form button,.request-form small{grid-column:1}}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h1>🏠 عقارات الظاظا</h1>
-  <p>منصة عقارية للإعلانات في حلب</p>
+<header class="brand-header">
+  <div class="brand-pill">شبكة عقارية من شركة الظاظا</div>
+  <h1>🏡 شبكة عقارات الظاظا</h1>
+  <p>عقارك القادم يبدأ من هون — بيع • شراء • إيجار في حلب</p>
 </header>
+<section class="hero">
+  <div class="hero-copy">
+    <span>حلب • عقارات بكل ثقة</span>
+    <h2>البيت المناسب<br>بيستاهل تلاقيه</h2>
+    <p>تصفّح العقارات أو أرسل طلبك بالمواصفات التي تبحث عنها.</p>
+    <a href="#propertyRequests" class="hero-btn">🔎 اطلب العقار الذي تبحث عنه</a>
+  </div>
+</section>
+
+<section id="propertyRequests" class="request-section">
+  <h2>ما لقيت العقار المناسب؟</h2>
+  <p>اكتب مواصفات العقار الذي تبحث عنه، وسيتابع مكتب الظاظا طلبك.</p>
+  <form id="requestForm" class="request-form">
+    <select id="requestPurpose" required><option value="">شو بدك؟</option><option>شراء</option><option>إيجار</option></select>
+    <select id="requestType" required><option value="">نوع العقار</option><option>شقة</option><option>منزل</option><option>فيلا</option><option>أرض</option><option>محل</option><option>مكتب</option><option>مستودع</option><option>بناء</option><option>مزرعة</option></select>
+    <input id="requestArea" required placeholder="المنطقة المطلوبة في حلب">
+    <input id="requestBudget" required placeholder="الميزانية التقريبية">
+    <textarea id="requestDetails" placeholder="تفاصيل إضافية (المساحة، عدد الغرف...)"></textarea>
+    <input id="requestContact" required placeholder="رقم هاتفك أو واتسابك">
+    <button type="submit">إرسال طلب العقار</button>
+    <small>الخدمة مجانية. سيُفتح واتساب برسالة جاهزة لإرسال الطلب.</small>
+  </form>
+</section>
 
 <div class="add-section">
   <button class="add-btn" onclick="openForm()">
@@ -341,13 +378,9 @@ index.html
 </div>
 
 <footer>
-
-  <h3>عقارات الظاظا</h3>
-
-  <p>بيع • شراء • إيجار</p>
-
+  <h3>شركة عقارات الظاظا</h3>
+  <p>شبكة عقارات الظاظا — بيع • شراء • إيجار</p>
   <p>حلب والمناطق المحيطة</p>
-
 </footer>
 
 <!-- v4: reliable edit/delete buttons + fresh cache -->
@@ -787,5 +820,21 @@ if ("serviceWorker" in navigator) {
 
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!window.__swReloaded){window.__swReloaded=true;location.reload();}});}</script>
 
+
+<script>
+document.getElementById("requestForm")?.addEventListener("submit", function(e){
+  e.preventDefault();
+  const fields = [
+    ["العملية", document.getElementById("requestPurpose").value],
+    ["نوع العقار", document.getElementById("requestType").value],
+    ["المنطقة", document.getElementById("requestArea").value.trim()],
+    ["الميزانية", document.getElementById("requestBudget").value.trim()],
+    ["التفاصيل", document.getElementById("requestDetails").value.trim()],
+    ["رقم الزبون", document.getElementById("requestContact").value.trim()]
+  ];
+  const message = "طلب عقار جديد - شبكة عقارات الظاظا%0A" + fields.map(([k,v])=>encodeURIComponent(k)+": "+encodeURIComponent(v)).join("%0A");
+  window.open("https://wa.me/?text="+message, "_blank");
+});
+</script>
 </body>
 </html>
