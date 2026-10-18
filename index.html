@@ -887,5 +887,32 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
  };
  hideAll();
 })();
-</script></body>
+</script>
+<script>
+/* إحصائيات الزيارات الأساسية — لا تجمع أسماء أو أرقام الزوار */
+(function () {
+  const client = window.supabaseClient;
+  if (!client || !client.from) return;
+  const record = (eventType, propertyId) => {
+    client.from("site_analytics_events").insert({
+      event_type: eventType,
+      page_path: location.pathname + location.hash,
+      property_id: propertyId ? String(propertyId).slice(0, 100) : null
+    }).then(({ error }) => {
+      if (error) console.warn("تعذر تسجيل إحصائية الزيارة:", error.message);
+    });
+  };
+  record("page_view");
+  document.addEventListener("click", function (event) {
+    const card = event.target.closest(".card");
+    if (card) record("property_view", card.dataset.id || card.getAttribute("data-id"));
+    const link = event.target.closest('a[href^="https://wa.me/"], a[href^="tel:"]');
+    if (link) record("contact_click");
+  }, true);
+  const searchButton = document.querySelector('[onclick*="searchProperties"], #searchButton');
+  if (searchButton) searchButton.addEventListener("click", () => record("search"));
+})();
+</script>
+
+</body>
 </html>
