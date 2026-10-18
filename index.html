@@ -891,7 +891,7 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
 <script>
 /* إحصائيات الزيارات الأساسية — لا تجمع أسماء أو أرقام الزوار */
 (function () {
-  const client = window.supabaseClient;
+  const client = supabaseClient;
   if (!client || !client.from) return;
   const record = (eventType, propertyId) => {
     client.from("site_analytics_events").insert({
