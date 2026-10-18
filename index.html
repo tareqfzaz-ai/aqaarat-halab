@@ -888,31 +888,80 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
  hideAll();
 })();
 </script>
+
+<style>
+#statsAdmin{max-width:900px;margin:20px auto;padding:18px;background:#fff;border-radius:16px;box-shadow:0 3px 15px #ccd2df;color:#17213a}
+#statsAdmin h2{color:#a57a22;margin-bottom:10px}#statsAdmin input,#statsAdmin button{font-size:16px;padding:12px;border-radius:9px;margin:5px;border:1px solid #ccd2df}
+#statsAdmin button{background:#101b35;color:#e2bd63;font-weight:bold}#statsCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.stats-card{background:#f4f6fb;border-radius:12px;padding:16px;text-align:center}.stats-card strong{display:block;font-size:26px;color:#101b35;margin-top:7px}
+#statsMsg{line-height:1.8;margin-top:10px}
+</style>
+<section id="statsAdmin" hidden>
+<h2>📊 لوحة إحصائيات شبكة عقارات الظاظا</h2>
+<p>سجّل دخولك بحساب Supabase المصرّح له. اللوحة لا تعرض البيانات للزوار غير المسجلين.</p>
+<div id="statsLogin">
+<input id="statsEmail" type="email" autocomplete="username" placeholder="البريد الإلكتروني">
+<input id="statsPassword" type="password" autocomplete="current-password" placeholder="كلمة المرور">
+<button id="statsSignIn">تسجيل الدخول</button>
+<button id="statsSignOut" hidden>تسجيل الخروج</button>
+</div>
+<p id="statsMsg" role="status"></p>
+<div id="statsResults" hidden>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button data-range="today">اليوم</button><button data-range="week">آخر 7 أيام</button><button data-range="month">آخر 30 يوماً</button>
+</div>
+<div id="statsCards">
+<div class="stats-card">زيارات الصفحات<strong id="statPages">—</strong></div>
+<div class="stats-card">مشاهدات العقارات<strong id="statProperties">—</strong></div>
+<div class="stats-card">نقرات التواصل<strong id="statContacts">—</strong></div>
+<div class="stats-card">عمليات البحث<strong id="statSearches">—</strong></div>
+</div>
+<p style="margin-top:12px">هذه أعداد أحداث مسجّلة وليست عدد أشخاص فريدين.</p>
+</div></section>
 <script>
-/* إحصائيات الزيارات الأساسية — لا تجمع أسماء أو أرقام الزوار */
-(function () {
-  const client = supabaseClient;
-  if (!client || !client.from) return;
-  const record = (eventType, propertyId) => {
-    client.from("site_analytics_events").insert({
-      event_type: eventType,
-      page_path: location.pathname + location.hash,
-      property_id: propertyId ? String(propertyId).slice(0, 100) : null
-    }).then(({ error }) => {
-      if (error) console.warn("تعذر تسجيل إحصائية الزيارة:", error.message);
-    });
-  };
-  record("page_view");
-  document.addEventListener("click", function (event) {
-    const card = event.target.closest(".card");
-    if (card) record("property_view", card.dataset.id || card.getAttribute("data-id"));
-    const link = event.target.closest('a[href^="https://wa.me/"], a[href^="tel:"]');
-    if (link) record("contact_click");
-  }, true);
-  const searchButton = document.querySelector('[onclick*="searchProperties"], #searchButton');
-  if (searchButton) searchButton.addEventListener("click", () => record("search"));
+(function(){
+const root=document.getElementById('statsAdmin');
+const params=new URLSearchParams(location.search);
+if(params.get('admin')!=='1') return;
+root.hidden=false;
+document.getElementById('homeMenu').hidden=true;
+document.querySelectorAll('header,.hero,.request-section,.add-section,.form-box,.search,.container,#map,#viewNav').forEach(el=>{if(el)el.hidden=true;});
+const msg=document.getElementById('statsMsg');
+const login=document.getElementById('statsLogin');
+const results=document.getElementById('statsResults');
+let range='today';
+function say(t){msg.textContent=t;}
+async function refresh(){
+ const {data:auth}=await supabaseClient.auth.getUser();
+ if(!auth.user){results.hidden=true;login.hidden=false;say('سجّل الدخول بحساب الإدارة.');return;}
+ login.hidden=false;document.getElementById('statsSignIn').hidden=true;document.getElementById('statsSignOut').hidden=false;
+ const now=new Date();let from=new Date(now);
+ if(range==='today')from.setHours(0,0,0,0);
+ if(range==='week')from.setDate(from.getDate()-7);
+ if(range==='month')from.setDate(from.getDate()-30);
+ const {data,error}=await supabaseClient.from('site_analytics_events').select('event_type,created_at').gte('created_at',from.toISOString()).lte('created_at',now.toISOString());
+ if(error){results.hidden=true;say('تعذّر تحميل الإحصائيات. تأكد من صلاحيات حساب الإدارة.');return;}
+ const count=t=>data.filter(e=>e.event_type===t).length;
+ document.getElementById('statPages').textContent=count('page_view');
+ document.getElementById('statProperties').textContent=count('property_view');
+ document.getElementById('statContacts').textContent=count('contact_click');
+ document.getElementById('statSearches').textContent=count('search');
+ results.hidden=false;say('تم تحميل الإحصائيات المسجّلة للفترة المحددة.');
+}
+document.getElementById('statsSignIn').addEventListener('click',async()=>{
+ const email=document.getElementById('statsEmail').value.trim(),password=document.getElementById('statsPassword').value;
+ if(!email||!password){say('أدخل البريد الإلكتروني وكلمة المرور.');return;}
+ const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+ if(error){say('تعذّر تسجيل الدخول. تأكد من بيانات الحساب.');return;}
+ await refresh();
+});
+document.getElementById('statsSignOut').addEventListener('click',async()=>{await supabaseClient.auth.signOut();results.hidden=true;document.getElementById('statsSignIn').hidden=false;document.getElementById('statsSignOut').hidden=true;say('تم تسجيل الخروج.');});
+root.querySelectorAll('[data-range]').forEach(b=>b.addEventListener('click',async()=>{range=b.dataset.range;await refresh();}));
+supabaseClient.auth.onAuthStateChange(()=>{setTimeout(refresh,0);});
+refresh();
 })();
 </script>
+
 
 </body>
 </html>
