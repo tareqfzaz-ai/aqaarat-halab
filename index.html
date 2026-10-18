@@ -889,6 +889,22 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
 })();
 </script>
 
+<script>
+/* تسجيل إحصائيات عامة دون جمع بيانات تعريفية */
+(function(){
+ const record=(type,id)=>supabaseClient.from('site_analytics_events').insert({
+  event_type:type,page_path:location.pathname+location.hash,
+  property_id:id?String(id).slice(0,100):null
+ }).then(({error})=>{if(error)console.warn('تعذر تسجيل الإحصائية',error.message);});
+ record('page_view');
+ document.addEventListener('click',function(e){
+  const card=e.target.closest('.card');
+  if(card)record('property_view',card.dataset.id||card.getAttribute('data-id'));
+  if(e.target.closest('a[href^="https://wa.me/"],a[href^="tel:"]'))record('contact_click');
+  if(e.target.closest('[onclick*="searchProperties"],#searchButton'))record('search');
+ },true);
+})();
+</script>
 <style>
 #statsAdmin{max-width:900px;margin:20px auto;padding:18px;background:#fff;border-radius:16px;box-shadow:0 3px 15px #ccd2df;color:#17213a}
 #statsAdmin h2{color:#a57a22;margin-bottom:10px}#statsAdmin input,#statsAdmin button{font-size:16px;padding:12px;border-radius:9px;margin:5px;border:1px solid #ccd2df}
