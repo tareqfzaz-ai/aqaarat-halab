@@ -319,9 +319,13 @@ footer h3{font-size:24px;color:var(--gold2);margin-bottom:6px}
   <p>اختار شو بدك تعمل، وكل قسم بيفتح لحاله بدون ما تضطر تنزل بين كل الأقسام.</p>
   <button type="button" class="menu-card" onclick="showAppView('request')"><span>🔎</span><strong>طلب عقار</strong><small>اطلب بيت أو عقار بالمواصفات اللي بدك ياها</small></button>
   <button type="button" class="menu-card" onclick="showAppView('browse')"><span>🏘️</span><strong>تصفّح العقارات</strong><small>شوف الإعلانات والأسعار والمناطق</small></button>
-  <button type="button" class="menu-card" onclick="showAppView('add')"><span>➕</span><strong>إضافة إعلان عقاري</strong><small>أضف عقارك أو إعلانك</small></button>
+  <button type="button" class="menu-card" id="adminAddMenu" onclick="showAppView('add')" hidden><span>➕</span><strong>إدارة العقارات</strong><small>إضافة إعلان وتعديل العقارات وحذفها — للإدارة فقط</small></button>
 </nav>
 <div id="viewNav" class="view-nav" hidden><button type="button" onclick="goHome()">← رجوع للأقسام الرئيسية</button><span id="viewTitle">القسم</span></div>
+<div id="adminBar" hidden style="max-width:1100px;margin:12px auto;padding:12px 16px;background:#e9f4ed;border:1px solid #b9ddc6;border-radius:12px;color:#175b35;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+<span>🔐 وضع الإدارة مفعّل</span><span id="adminEmailLabel">tareqfzaz@gmail.com</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><a href="?admin=1" style="padding:8px 12px;border-radius:8px;background:#101b35;color:#e2bd63;text-decoration:none;font-weight:bold">📊 الإحصائيات</a><button type="button" id="adminSignOut" style="padding:8px 12px;border:0;border-radius:8px;background:#f5dddd;color:#8d1c1c;font-weight:bold">تسجيل الخروج</button></div>
+</div>
 
 <section id="propertyRequests" class="request-section">
   <h2>ما لقيت العقار المناسب؟</h2>
@@ -484,6 +488,35 @@ const supabaseClient =
     SUPABASE_KEY
   );
 
+const ADMIN_EMAIL = "tareqfzaz@gmail.com";
+let isAdmin = false;
+
+function updateAdminUI(){
+  const adminMenu=document.getElementById("adminAddMenu");
+  const adminBar=document.getElementById("adminBar");
+  const addSection=document.querySelector(".add-section");
+  const formBox=document.getElementById("formBox");
+  if(adminMenu)adminMenu.hidden=!isAdmin;
+  if(adminBar)adminBar.hidden=!isAdmin;
+  if(addSection)addSection.hidden=!isAdmin;
+  if(formBox&&!isAdmin){formBox.hidden=true;formBox.style.display="none";}
+  if(!isAdmin && document.getElementById("viewTitle")?.textContent==="إضافة إعلان عقاري")goHome();
+}
+
+async function syncAdminSession(){
+  const {data}=await supabaseClient.auth.getSession();
+  isAdmin=String(data?.session?.user?.email||"").toLowerCase()===ADMIN_EMAIL;
+  if(data?.session && !isAdmin) await supabaseClient.auth.signOut();
+  updateAdminUI();
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("adminSignOut")?.addEventListener("click",async()=>{
+    await supabaseClient.auth.signOut();
+    isAdmin=false;updateAdminUI();goHome();
+  });
+});
+
 let properties = [];
 const importedPropertyDefault = {
   id: "whatsapp-1539",
@@ -545,6 +578,7 @@ async function loadProperties() {
 /* إضافة إعلان */
 
 async function addProperty() {
+  if(!isAdmin){alert("إضافة العقارات متاحة لحساب الإدارة فقط.");return;}
   const btn=document.getElementById("publishBtn");
   if(btn.disabled)return;
   const title=document.getElementById("title").value.trim();
@@ -605,6 +639,8 @@ async function addProperty() {
     let uploadedVideoPath=null;
 
     if(videoInput.files.length){
+      const {data:sessionData}=await supabaseClient.auth.getSession();
+      if(!sessionData?.session?.access_token) throw new Error("سجّل الدخول بحساب الإدارة قبل رفع الفيديو.");
       const videoFile=videoInput.files[0];
       if(videoFile.size>50*1024*1024) throw new Error("الفيديو أكبر من 50 ميغابايت");
 
@@ -617,7 +653,7 @@ async function addProperty() {
         const tusUpload=new tus.Upload(videoFile,{
           endpoint:"https://kypzypsonkzfrhpldtmp.storage.supabase.co/storage/v1/upload/resumable",
           retryDelays:[0,3000,5000,10000,20000],
-          headers:{apikey:SUPABASE_KEY,authorization:"Bearer "+SUPABASE_KEY,"x-upsert":"false"},
+          headers:{apikey:SUPABASE_KEY,authorization:"Bearer "+sessionData.session.access_token,"x-upsert":"false"},
           uploadDataDuringCreation:true,
           removeFingerprintOnSuccess:true,
           chunkSize:6*1024*1024,
@@ -701,6 +737,7 @@ function clearForm(){
 }
 
 window.editProperty = async function(id){
+  if(!isAdmin){alert("تعديل العقارات متاح لحساب الإدارة فقط.");return;}
   if(id === importedProperty.id) localStorage.removeItem("aqaarat_imported_deleted");
   let p=properties.find(x=>String(x.id)===String(id));
   if(!p && id !== importedProperty.id){
@@ -736,6 +773,7 @@ window.editProperty = async function(id){
 }
 
 window.deleteProperty = async function(id){
+  if(!isAdmin){alert("حذف العقارات متاح لحساب الإدارة فقط.");return;}
   if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;
   if(id === importedProperty.id){
     localStorage.setItem("aqaarat_imported_deleted","1");
@@ -821,8 +859,9 @@ function displayProperties(list) {
       '<a class="contact" href="tel:'+cleanPhone+'">📞 اتصال</a>'+
       '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك من منصة عقارات حلب الظاظا بخصوص هذا العرض.\n\nالعقار: "+property.title+"\nالمنطقة: "+property.area+"\nالسعر: "+property.price+"\n\nرابط العرض:\n"+window.location.origin+window.location.pathname+"?property="+encodeURIComponent(String(property.id)))+'" target="_blank" rel="noopener noreferrer">📱 واتساب</a>'+
       (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
-      (video?((video.startsWith("data:video/")?'<video class="card-image" controls preload="metadata" src="'+video+'"></video>':'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener noreferrer">🎥 فيديو العقار</a>')):"")+'<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
-      '<button type="button" class="delete-btn" data-action="delete" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">🗑️ حذف</button>'+
+      (video?((video.startsWith("data:video/")?'<video class="card-image" controls preload="metadata" src="'+video+'"></video>':'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener noreferrer">🎥 فيديو العقار</a>')):"")+
+      (isAdmin?'<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
+      '<button type="button" class="delete-btn" data-action="delete" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">🗑️ حذف</button>':"")+
       '</div></div>';
     container.appendChild(card);
   });
@@ -891,13 +930,21 @@ window.searchProperties = function() {
 }
 
 
-/* تشغيل تحميل الإعلانات عند فتح الموقع */
-
-loadProperties();
+/* تشغيل الموقع بعد التحقق من جلسة الإدارة */
+async function initializeApp(){
+  await syncAdminSession();
+  await loadProperties();
+}
+initializeApp();
+supabaseClient.auth.onAuthStateChange((_event,session)=>{
+  isAdmin=String(session?.user?.email||"").toLowerCase()===ADMIN_EMAIL;
+  updateAdminUI();
+  if(!session)loadProperties();
+});
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js?v=18").then(reg=>reg.update()).catch(console.error);
+    navigator.serviceWorker.register("./sw.js?v=19").then(reg=>reg.update()).catch(console.error);
   });
 }
 
@@ -1016,7 +1063,8 @@ let range='today';
 function say(t){msg.textContent=t;}
 async function refresh(){
  const {data:auth}=await supabaseClient.auth.getUser();
- if(!auth.user){results.hidden=true;login.hidden=false;say('سجّل الدخول بحساب الإدارة.');return;}
+ if(!auth.user){results.hidden=true;login.hidden=false;document.getElementById('statsSignIn').hidden=false;document.getElementById('statsSignOut').hidden=true;say('سجّل الدخول ببريد الإدارة المصرّح به.');return;}
+ if(String(auth.user.email||'').toLowerCase()!==ADMIN_EMAIL){await supabaseClient.auth.signOut();results.hidden=true;say('هذا الحساب غير مخوّل لإدارة شبكة عقارات الظاظا.');return;}
  login.hidden=false;document.getElementById('statsSignIn').hidden=true;document.getElementById('statsSignOut').hidden=false;
  const now=new Date();let from=new Date(now);
  if(range==='today')from.setHours(0,0,0,0);
@@ -1034,6 +1082,7 @@ async function refresh(){
 document.getElementById('statsSignIn').addEventListener('click',async()=>{
  const email=document.getElementById('statsEmail').value.trim(),password=document.getElementById('statsPassword').value;
  if(!email||!password){say('أدخل البريد الإلكتروني وكلمة المرور.');return;}
+ if(email.toLowerCase()!==ADMIN_EMAIL){say('استخدم البريد المخصص للإدارة فقط.');return;}
  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
  if(error){say('تعذّر تسجيل الدخول. تأكد من بيانات الحساب.');return;}
  await refresh();
