@@ -1,1165 +1,225 @@
-index.html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>شركة عقارات الظاظا | شبكة عقارات الظاظا</title>
-  <meta property="og:image" content="https://tareqfzaz-ai.github.io/aqaarat-halab/cover.png">
-  <meta property="og:title" content="شبكة عقارات الظاظا">
-  <meta property="og:description" content="شبكة عقارات الظاظا — بيع وشراء وإيجار في حلب">
-  <meta property="og:type" content="website">
-<meta property="og:url" content="https://tareqfzaz-ai.github.io/aqaarat-halab/">
-<meta property="og:image:width" content="1000">
-<meta property="og:image:height" content="563">
-  <meta property="og:image:type" content="image/png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101b35">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="عقارات الظاظا">
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://tareqfzaz-ai.github.io/aqaarat-halab/cover.png">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background: #f4f6fb;
-      color: #222;
-    }
-
-    header {
-      background: #101b35;
-      color: #e2bd63;
-      text-align: center;
-      padding: 25px 15px;
-    }
-
-    header h1 {
-      font-size: 34px;
-      margin-bottom: 8px;
-    }
-
-    header p {
-      color: white;
-      font-size: 16px;
-    }
-
-    .add-section {
-      text-align: center;
-      padding: 20px;
-      background: white;
-    }
-
-    .add-btn {
-      background: #e2bd63;
-      color: #111;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .form-box {
-      display: none;
-      max-width: 700px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 3px 15px #ccc;
-    }
-
-    .form-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #b1842c;
-    }
-
-    .form-box input,
-    .form-box select,
-    .form-box textarea {
-      width: 100%;
-      padding: 13px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    .form-box textarea {
-      height: 100px;
-      resize: vertical;
-    }
-
-    .publish-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background: #111;
-      color: white;
-      font-size: 17px;
-      cursor: pointer;
-    }
-
-    .search {
-      background: white;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 8px #ccc;
-    }
-
-    .search input,
-    .search select {
-      padding: 12px;
-      margin: 5px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    .search button {
-      padding: 12px 25px;
-      border: none;
-      border-radius: 8px;
-      background: #d4af37;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 25px auto;
-      padding: 15px;
-    }
-
-    .title {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 3px 12px #ccc;
-    }
-
-    .card-image {
-      width: 100%;
-      height: 190px;
-      object-fit: cover;
-      background: #ddd;
-    }
-
-    .card-content {
-      padding: 15px;
-    }
-
-    .card h3 {
-      color: #b28b18;
-      margin-bottom: 10px;
-    }
-
-    .card p {
-      margin: 7px 0;
-    }
-
-    .contact {
-      display: block;
-      margin-top: 15px;
-      text-align: center;
-      padding: 11px;
-      background: #111;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-    }
-
-    footer {
-      margin-top: 40px;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 25px;
-    }
-
-    .empty {
-      text-align: center;
-      padding: 30px;
-      color: #777;
-    }
-  </style>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>#map{height:65px;width:60%;max-width:360px;margin:10px auto;border-radius:10px;box-shadow:0 2px 8px #ccc}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.map-btn,.edit-btn,.delete-btn{display:block;text-align:center;padding:10px;border:0;border-radius:8px;text-decoration:none;font-weight:bold}.map-btn{background:#eee;color:#222}.edit-btn{background:#d4af37;color:#111}.delete-btn{background:#f1d4d4;color:#9b111e}</style>
-
+<title>شبكة عقارات الظاظا | لوحة الإدارة الخاصة</title>
+<meta name="description" content="نظام خاص لإدارة عقارات وطلبات ومكاتب شبكة عقارات الظاظا">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <style>
-.brand-header{background:linear-gradient(120deg,#0b1429,#17294a 65%,#263a5e);padding:28px 16px 30px;border-bottom:3px solid #e2bd63}
-.brand-pill{display:inline-block;border:1px solid #e2bd63;border-radius:30px;padding:6px 14px;color:#f5df9d;font-size:13px;margin-bottom:12px}
-.brand-header h1{font-size:clamp(27px,5vw,42px);line-height:1.4;color:#f1d48a}
-.brand-header p{max-width:700px;margin:8px auto 0;color:#fff}
-.hero{min-height:330px;display:flex;align-items:center;padding:28px 7%;background:linear-gradient(90deg,rgba(9,17,34,.88),rgba(9,17,34,.38)),url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=85') center/cover}
-.hero-copy{max-width:560px;color:white}.hero-copy span{color:#f1d48a;font-weight:bold}.hero-copy h2{font-size:clamp(30px,5vw,48px);line-height:1.35;margin:12px 0}.hero-copy p{font-size:17px;line-height:1.8;margin-bottom:20px}.hero-btn{display:inline-block;background:#e2bd63;color:#101b35;text-decoration:none;font-weight:bold;padding:13px 20px;border-radius:12px}
-.request-section{max-width:850px;margin:26px auto;padding:24px 18px;background:#fff;border:1px solid #e4e8f0;border-radius:18px;box-shadow:0 8px 28px rgba(16,27,53,.08);text-align:center}
-.request-section h2{color:#101b35;margin-bottom:8px}.request-section>p{color:#59657a;line-height:1.8;margin-bottom:16px}
-.request-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.request-form input,.request-form select,.request-form textarea{width:100%;min-width:0;padding:13px;border:1px solid #d6dce7;border-radius:10px;font:inherit;background:#fff}.request-form textarea{grid-column:1/-1;min-height:85px}.request-form button{grid-column:1/-1;background:#101b35;color:#f1d48a;border:0;border-radius:10px;padding:14px;font:inherit;font-weight:bold;cursor:pointer}.request-form small{grid-column:1/-1;color:#667085}
-@media(max-width:560px){.hero{min-height:310px;padding:24px 18px}.request-form{grid-template-columns:1fr}.request-form textarea,.request-form button,.request-form small{grid-column:1}}
-</style>
-<style>
-[hidden]{display:none!important}
-.home-menu{max-width:900px;margin:24px auto;padding:20px 16px;text-align:center}
-.home-menu h2{color:#101b35;margin-bottom:8px}.home-menu>p{color:#59657a;margin-bottom:18px;line-height:1.7}
-.menu-card{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;max-width:620px;margin:12px auto;padding:22px 16px;border:1px solid #e2bd63;border-radius:18px;background:linear-gradient(135deg,#fff,#f7f3e7);color:#101b35;box-shadow:0 5px 16px rgba(16,27,53,.09);cursor:pointer;font:inherit}
-.menu-card span{font-size:36px}.menu-card strong{font-size:20px}.menu-card small{font-size:14px;color:#59657a;line-height:1.6}
-.view-nav{position:sticky;top:0;z-index:999;background:#101b35;color:#f1d48a;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 10px #0002}
-.view-nav button{background:#e2bd63;border:0;border-radius:9px;padding:10px 13px;font-weight:bold;color:#101b35}
-.view-nav span{font-weight:bold}
-</style>
-<style id="premium-redesign-v5">
-:root{--navy:#0b1630;--navy2:#14264a;--gold:#e8c56e;--gold2:#f7e7b5;--ink:#18233b;--muted:#66738b;--paper:#f5f7fb;--line:#e4e9f2;--green:#18794e}
-html{scroll-behavior:smooth;scroll-padding-top:82px}
-body{background:radial-gradient(circle at 90% 0,#e9eef8 0,transparent 32%),var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.65}
-button,input,select,textarea{font:inherit}
-.brand-header{position:relative;overflow:hidden;padding:22px 16px 25px;background:linear-gradient(125deg,#071126 0%,#12274d 55%,#1d3866 100%);border-bottom:4px solid var(--gold);box-shadow:0 8px 28px #09152a22}
-.brand-header:before{content:"";position:absolute;width:250px;height:250px;border:1px solid #e8c56e33;border-radius:50%;left:-70px;top:-140px;box-shadow:0 0 0 25px #e8c56e0c,0 0 0 55px #e8c56e08}
-.brand-pill{position:relative;background:#ffffff0c;border-color:#e8c56e88;letter-spacing:.2px}
-.brand-header h1{position:relative;text-shadow:0 3px 15px #0004}
-.brand-header p{position:relative;font-size:16px;line-height:1.9}
-.hero{min-height:360px;padding:36px max(6%,calc((100% - 1180px)/2));background-image:linear-gradient(90deg,rgba(5,13,29,.94) 0%,rgba(7,18,39,.76) 52%,rgba(7,18,39,.26) 100%),url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=85');background-position:center;background-size:cover;border-radius:0 0 28px 28px}
-.hero-copy{max-width:600px;text-shadow:0 2px 14px #0005}.hero-copy span{display:inline-block;background:#e8c56e20;border:1px solid #e8c56e77;border-radius:99px;padding:5px 12px;font-size:14px}.hero-copy h2{font-weight:850;letter-spacing:-.5px}.hero-copy p{max-width:510px;color:#f0f3fa;line-height:1.95}
-.hero-btn,.add-btn,.publish-btn,.request-form button,.search button{transition:transform .18s,box-shadow .18s,filter .18s}
-.hero-btn{border-radius:12px;box-shadow:0 8px 22px #0003}.hero-btn:hover,.add-btn:hover,.publish-btn:hover,.request-form button:hover,.search button:hover{transform:translateY(-2px);box-shadow:0 8px 20px #101b3522;filter:brightness(1.03)}
-.home-menu{max-width:1050px;padding:30px 18px 18px}
-.home-menu h2{font-size:clamp(23px,4vw,32px);font-weight:850;letter-spacing:-.4px}
-.home-menu>p{max-width:650px;margin:0 auto 22px;line-height:1.9}
-.menu-card{position:relative;display:grid;grid-template-columns:64px 1fr;grid-template-rows:auto auto;column-gap:14px;align-items:center;text-align:right;max-width:760px;padding:18px 20px;border:1px solid #e3e8f1;border-radius:20px;background:linear-gradient(115deg,#fff,#f8f9fc);box-shadow:0 8px 24px #15294a0b;transition:transform .2s,border-color .2s,box-shadow .2s}
-.menu-card:hover{transform:translateY(-3px);border-color:#d7b65e;box-shadow:0 14px 28px #15294a16}
-.menu-card span{grid-row:1/3;display:grid;place-items:center;width:58px;height:58px;border-radius:17px;background:linear-gradient(145deg,#10264b,#0b1630);font-size:29px;box-shadow:inset 0 0 0 1px #e8c56e55}
-.menu-card strong{font-size:19px;align-self:end}.menu-card small{font-size:14px;line-height:1.65;align-self:start}
-.view-nav{top:0;padding:10px max(14px,calc((100% - 1100px)/2));background:#0b1630f5;backdrop-filter:blur(12px);border-bottom:1px solid #e8c56e55}
-.view-nav button{border-radius:10px;padding:10px 14px;white-space:nowrap}.view-nav span{font-size:15px}
-.request-section{max-width:920px;margin:26px auto;padding:clamp(20px,4vw,34px);border:1px solid var(--line);border-radius:24px;box-shadow:0 14px 40px #15294a0c;text-align:right}
-.request-section h2{font-size:clamp(23px,4vw,30px);font-weight:850}.request-section>p{line-height:1.9}
-.request-form{gap:12px}.request-form input,.request-form select,.request-form textarea,.form-box input,.form-box select,.form-box textarea,.search input,.search select{min-height:48px;border:1px solid #d8dfeb;border-radius:12px;padding:12px 14px;background:#fbfcfe;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
-.request-form input:focus,.request-form select:focus,.request-form textarea:focus,.form-box input:focus,.form-box select:focus,.form-box textarea:focus,.search input:focus,.search select:focus{border-color:#c29a3c;box-shadow:0 0 0 3px #e8c56e2c}
-.request-form button{background:linear-gradient(115deg,#0b1630,#1a3159);color:var(--gold2);border-radius:12px;min-height:50px}
-.add-section{background:transparent;padding:18px 15px 8px}.add-btn{background:linear-gradient(120deg,#e8c56e,#f5dfa0);color:#111c32;border-radius:13px;box-shadow:0 7px 18px #b58b2824}
-.form-box{max-width:850px;padding:clamp(18px,4vw,30px);border:1px solid var(--line);border-radius:22px;box-shadow:0 16px 45px #15294a12}
-.form-box h2{font-size:25px;color:#a47a22;font-weight:850}
-.publish-btn{background:linear-gradient(115deg,#0b1630,#1a3159);color:#f7e7b5;border-radius:12px;min-height:50px;font-weight:800}
-#map{height:320px!important;width:calc(100% - 30px)!important;max-width:1120px!important;margin:14px auto 22px!important;border:1px solid #dce3ee;border-radius:20px!important;box-shadow:0 12px 30px #15294a12;z-index:1}
-body>h2{text-align:center!important;font-size:clamp(22px,4vw,30px);font-weight:850;color:var(--navy);margin:32px 0 12px!important}
-.search{max-width:1120px;margin:0 auto 22px;border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;gap:10px;flex-wrap:wrap;box-shadow:0 8px 25px #15294a09}
-.search input{flex:1;min-width:200px}.search select{min-width:150px}.search button{border-radius:12px}
-.container{max-width:1180px;margin:28px auto;padding:12px 18px 32px}
-.title{position:relative;margin-bottom:24px!important;color:var(--navy);font-size:clamp(24px,4vw,32px);font-weight:900}
-.title:after{content:"";display:block;width:76px;height:4px;border-radius:8px;background:var(--gold);margin:9px auto 0}
-.cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,285px),1fr));gap:22px}
-.card{border:1px solid #e3e8f0;border-radius:20px;box-shadow:0 8px 28px #15294a0b;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
-.card:hover{transform:translateY(-4px);box-shadow:0 16px 34px #15294a18}
-.card-image{height:215px;object-fit:cover;background:linear-gradient(135deg,#e8edf5,#f8f5e9)}
-.card-content{padding:18px;display:flex;flex-direction:column;gap:2px;flex:1}
-.card h3{font-size:20px;line-height:1.55;color:#a67b20;margin-bottom:10px}
-.card p{margin:5px 0;line-height:1.7;color:#45516a;font-size:14px;overflow-wrap:anywhere}
-.actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:auto;padding-top:14px}
-.actions a,.actions button{min-width:0;margin:0!important;border:0;display:flex;align-items:center;justify-content:center;gap:5px;padding:11px 8px;border-radius:11px;font-size:14px;font-weight:750;text-decoration:none;cursor:pointer}
-.actions .contact{background:#0d1c38;color:white}.actions .contact:nth-child(2){background:#167b50;color:white}
-.actions .map-btn{background:#edf2fa;color:#1d3d70}.actions .edit-btn{background:#fff3ce;color:#785715}.actions .delete-btn{background:#fff0f0;color:#a32632}
-.empty{padding:38px 20px;border:1px dashed #cbd4e2;border-radius:18px;background:#fff;color:#6b778e}
-footer{margin-top:30px;background:linear-gradient(130deg,#071126,#14294f);border-top:4px solid var(--gold);padding:32px 18px;color:#fff;line-height:2}
-footer h3{font-size:24px;color:var(--gold2);margin-bottom:6px}
-.image-modal{z-index:2000}
-@media(max-width:650px){
- .hero{min-height:330px;padding:28px 20px;border-radius:0 0 20px 20px;background-position:58% center}
- .hero-copy h2{font-size:32px}.hero-copy p{font-size:15px}
- .home-menu{padding:22px 14px 12px}.menu-card{grid-template-columns:52px 1fr;padding:15px 13px;gap:10px}.menu-card span{width:48px;height:48px;font-size:25px;border-radius:14px}.menu-card strong{font-size:17px}.menu-card small{font-size:13px}
- .request-section{margin:16px 12px;border-radius:19px}.request-form{grid-template-columns:1fr}.request-form textarea,.request-form button,.request-form small{grid-column:1}
- .form-box{margin:14px 12px}.search{margin:0 12px 20px;display:grid;grid-template-columns:1fr}.search input,.search select{width:100%;min-width:0}
- #map{height:290px!important;width:calc(100% - 24px)!important}
- .container{padding:10px 12px 28px}.cards{gap:15px}.card-image{height:205px}
- .view-nav{gap:8px;padding:9px 10px}.view-nav button{font-size:13px;padding:9px 10px}.view-nav span{font-size:13px}
-}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+:root{--navy:#101b35;--navy2:#18294c;--gold:#e5c36d;--gold2:#f8e7b0;--ink:#17233b;--muted:#68758b;--paper:#f4f6fb;--line:#e2e7f0;--white:#fff;--green:#18794e;--red:#b42332;--blue:#2858a6;--shadow:0 14px 36px #1323440c}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Tahoma,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}.hidden,[hidden]{display:none!important}
+.top{background:linear-gradient(120deg,#0b1429,#18294c);color:white;padding:20px max(16px,calc((100% - 1220px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-bottom:3px solid var(--gold)}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,var(--gold2),var(--gold));color:var(--navy);display:grid;place-items:center;font-size:26px;font-weight:900;box-shadow:0 5px 15px #0002}.brand h1{font-size:clamp(20px,3vw,28px);margin:0 0 5px;color:var(--gold2)}.brand p{margin:0;color:#d7dfed;font-size:13px}.secure{font-size:12px;background:#ffffff12;border:1px solid #ffffff26;border-radius:999px;padding:9px 13px;color:#e8edfa}
+.wrap{max-width:1220px;margin:24px auto;padding:0 16px 36px}.login-wrap{min-height:calc(100vh - 100px);display:grid;place-items:center;padding:22px}.login-card{width:min(100%,440px);background:white;border:1px solid var(--line);border-radius:24px;padding:clamp(22px,5vw,36px);box-shadow:var(--shadow)}.login-icon{width:64px;height:64px;display:grid;place-items:center;border-radius:20px;background:#fff5d8;font-size:32px;margin-bottom:18px}.login-card h2{margin:0 0 9px;font-size:26px}.login-card p{color:var(--muted);line-height:1.8;margin:0 0 20px}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field label{font-size:13px;font-weight:800;color:#35425b}.field input,.field select,.field textarea,.toolbar input,.toolbar select{width:100%;min-width:0;border:1px solid #d6deeb;background:#fff;color:var(--ink);border-radius:11px;padding:12px 13px;outline:none}.field input:focus,.field select:focus,.field textarea:focus,.toolbar input:focus,.toolbar select:focus{border-color:#b38a2d;box-shadow:0 0 0 3px #e5c36d30}.field textarea{min-height:94px;resize:vertical}.grid-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.span2{grid-column:1/-1}.btn{border:0;border-radius:11px;padding:11px 15px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}.btn-gold{background:linear-gradient(120deg,var(--gold),var(--gold2));color:var(--navy)}.btn-dark{background:var(--navy);color:white}.btn-light{background:#eef2f8;color:#24324c}.btn-red{background:#fff0f1;color:var(--red)}.btn-green{background:#e8f6ed;color:#17643f}.btn-small{padding:7px 10px;font-size:12px;border-radius:9px}.wide{width:100%}.hint{font-size:12px;color:var(--muted);line-height:1.7}.message{margin-top:13px;padding:11px 13px;border-radius:10px;font-size:13px;line-height:1.6}.message.error{background:#fff0f0;color:#9c1c2b}.message.ok{background:#eaf7ee;color:#17643f}
+.app{display:grid;grid-template-columns:245px minmax(0,1fr);gap:20px}.side{align-self:start;position:sticky;top:14px;background:white;border:1px solid var(--line);border-radius:20px;padding:13px;box-shadow:var(--shadow)}.side-title{padding:12px 11px 15px;font-weight:900;color:var(--navy);border-bottom:1px solid var(--line);margin-bottom:9px}.navbtn{display:flex;width:100%;text-align:right;align-items:center;gap:10px;border:0;background:transparent;padding:13px 12px;border-radius:12px;color:#4b5870;font-weight:800;margin:3px 0}.navbtn .ico{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:#f0f3f8;font-size:16px}.navbtn.active{background:#101b35;color:var(--gold2)}.navbtn.active .ico{background:#ffffff1a}.side-bottom{border-top:1px solid var(--line);margin-top:12px;padding:12px 5px 2px}.content{min-width:0}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:3px 0 18px}.page-head h2{font-size:clamp(23px,3vw,30px);margin:0 0 7px;color:var(--navy)}.page-head p{margin:0;color:var(--muted);line-height:1.7}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:18px}.stat{background:white;border:1px solid var(--line);border-radius:17px;padding:18px;box-shadow:var(--shadow);min-width:0}.stat-top{display:flex;justify-content:space-between;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:700}.stat-ico{width:37px;height:37px;border-radius:12px;background:#fff4d3;display:grid;place-items:center;font-size:19px}.stat strong{display:block;font-size:30px;color:var(--navy);margin-top:13px}.stat small{display:block;color:var(--muted);margin-top:5px;font-size:12px}
+.panel{background:white;border:1px solid var(--line);border-radius:19px;padding:clamp(15px,2.5vw,23px);box-shadow:var(--shadow);margin-bottom:17px;min-width:0}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}.panel-head h3{margin:0;color:var(--navy);font-size:18px}.panel-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.6}.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.quick{border:1px solid var(--line);border-radius:15px;padding:17px;text-align:right;background:linear-gradient(140deg,#fff,#f9fafc);color:var(--ink)}.quick span{font-size:24px;display:block;margin-bottom:12px}.quick strong{display:block;margin-bottom:6px}.quick small{color:var(--muted);line-height:1.7}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:170px}.toolbar select{width:auto;min-width:140px}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px}table{border-collapse:collapse;width:100%;min-width:680px;background:white}th,td{padding:12px 13px;border-bottom:1px solid #edf0f5;text-align:right;vertical-align:top;font-size:13px;line-height:1.6}th{background:#f7f8fb;color:#59657b;font-size:12px;white-space:nowrap}tr:last-child td{border-bottom:0}.primary-cell{font-weight:900;color:var(--navy)}.subcell{display:block;color:var(--muted);font-weight:400;font-size:11px;margin-top:3px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#eef2f8;color:#42516a;white-space:nowrap}.pill.new{background:#fff4d4;color:#805a00}.pill.done{background:#e5f6eb;color:#17643f}.pill.off{background:#fff0f1;color:#a12431}.actions{display:flex;gap:6px;flex-wrap:wrap}.empty{padding:30px 15px;text-align:center;color:var(--muted);line-height:1.9}.empty b{display:block;font-size:18px;color:var(--navy);margin-bottom:5px}.status-select{border:1px solid #d6deeb;border-radius:9px;padding:8px;background:white;max-width:180px}.notice{padding:13px 15px;background:#fff8e5;border:1px solid #f0d994;border-radius:13px;color:#684c0b;line-height:1.7;font-size:13px;margin-bottom:16px}.modal-back{position:fixed;inset:0;z-index:1000;background:#0a1429a8;display:grid;place-items:center;padding:14px;overflow:auto}.modal{background:white;border-radius:21px;padding:22px;width:min(100%,760px);max-height:94vh;overflow:auto;box-shadow:0 25px 90px #0004}.modal h3{margin:0 0 18px;color:var(--navy)}.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.mobile-top{display:none}.foot{text-align:center;color:#8590a3;font-size:12px;padding:12px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.side{position:static;display:flex;gap:6px;overflow-x:auto;padding:8px;border-radius:15px}.side-title,.side-bottom{display:none}.navbtn{width:auto;min-width:max-content;padding:9px 11px;margin:0}.navbtn .ico{width:26px;height:26px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.top{padding:16px}.secure{width:100%;text-align:center}.wrap{padding:0 10px 24px;margin:15px auto}.grid-form{grid-template-columns:1fr}.span2{grid-column:1}.cards{gap:9px}.stat{padding:13px}.stat strong{font-size:25px}.stat-top{font-size:12px}.quick-grid{grid-template-columns:1fr}.panel{border-radius:15px}.page-head{margin-top:5px}.toolbar{display:grid;grid-template-columns:1fr}.toolbar input,.toolbar select{width:100%;min-width:0}.login-card{border-radius:20px}.brand p{font-size:12px}}
 </style>
 </head>
-
 <body>
-
-<header class="brand-header">
-  <div class="brand-pill">شبكة عقارية من شركة الظاظا</div>
-  <h1>🏡 شبكة عقارات الظاظا</h1>
-  <p>عقارك القادم يبدأ من هون — بيع • شراء • إيجار في حلب</p>
+<header class="top">
+ <div class="brand"><div class="logo">ظ</div><div><h1>شبكة عقارات الظاظا</h1><p>نظام إدارة العقارات والزبائن والتعاون العقاري</p></div></div>
+ <div class="secure">🔒 نظام خاص — البيانات لا تظهر للمكاتب الأخرى</div>
 </header>
-<section class="hero">
-  <div class="hero-copy">
-    <span>حلب • عقارات بكل ثقة</span>
-    <h2>البيت المناسب<br>بيستاهل تلاقيه</h2>
-    <p>تصفّح العقارات أو أرسل طلبك بالمواصفات التي تبحث عنها.</p>
-    <a href="#propertyRequests" class="hero-btn">🔎 اطلب العقار الذي تبحث عنه</a>
-  </div>
-</section>
-
-<nav id="homeMenu" class="home-menu" aria-label="الأقسام الرئيسية">
-  <h2>أهلاً بك في شبكة عقارات الظاظا</h2>
-  <p>اختار شو بدك تعمل، وكل قسم بيفتح لحاله بدون ما تضطر تنزل بين كل الأقسام.</p>
-  <button type="button" class="menu-card" onclick="showAppView('request')"><span>🔎</span><strong>طلب عقار</strong><small>اطلب بيت أو عقار بالمواصفات اللي بدك ياها</small></button>
-  <button type="button" class="menu-card" onclick="showAppView('browse')"><span>🏘️</span><strong>تصفّح العقارات</strong><small>شوف الإعلانات والأسعار والمناطق</small></button>
-  <button type="button" class="menu-card" id="adminAddMenu" onclick="showAppView('add')" hidden><span>➕</span><strong>إدارة العقارات</strong><small>إضافة إعلان وتعديل العقارات وحذفها — للإدارة فقط</small></button>
-  <button type="button" class="menu-card" id="adminRequestsMenu" onclick="showAppView('requests')" hidden><span>📥</span><strong>طلبات الزبائن</strong><small>عرض طلبات الشراء والإيجار وتحديث حالتها — للإدارة فقط</small></button>
-</nav>
-<div id="viewNav" class="view-nav" hidden><button type="button" onclick="goHome()">← رجوع للأقسام الرئيسية</button><span id="viewTitle">القسم</span></div>
-<div id="adminBar" hidden style="max-width:1100px;margin:12px auto;padding:12px 16px;background:#e9f4ed;border:1px solid #b9ddc6;border-radius:12px;color:#175b35;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-<span>🔐 وضع الإدارة مفعّل</span><span id="adminEmailLabel">tareqfzaz@gmail.com</span>
-<div style="display:flex;gap:8px;flex-wrap:wrap"><a href="?admin=1" style="padding:8px 12px;border-radius:8px;background:#101b35;color:#e2bd63;text-decoration:none;font-weight:bold">📊 الإحصائيات</a><button type="button" id="adminSignOut" style="padding:8px 12px;border:0;border-radius:8px;background:#f5dddd;color:#8d1c1c;font-weight:bold">تسجيل الخروج</button></div>
-</div>
-
-<section id="adminRequestsPanel" hidden style="max-width:1000px;margin:20px auto;padding:18px;background:#fff;border:1px solid #e4e9f2;border-radius:18px;box-shadow:0 8px 28px #15294a0b">
-  <h2 style="color:#101b35;margin-bottom:8px">📥 طلبات الزبائن</h2>
-  <p style="color:#667085;margin-bottom:14px">الطلبات محفوظة بشكل خاص، ولا يمكن للزوار أو المكاتب الأخرى الاطلاع عليها.</p>
-  <div id="customerRequestsList"><p>جاري تحميل الطلبات…</p></div>
-</section>
-
-<section id="propertyRequests" class="request-section">
-  <h2>ما لقيت العقار المناسب؟</h2>
-  <p>اكتب مواصفات العقار الذي تبحث عنه، وسيتابع مكتب الظاظا طلبك.</p>
-  <form id="requestForm" class="request-form">
-    <select id="requestPurpose" required><option value="">شو بدك؟</option><option>شراء</option><option>إيجار</option></select>
-    <select id="requestType" required><option value="">نوع العقار</option><option>شقة</option><option>منزل</option><option>فيلا</option><option>أرض</option><option>محل</option><option>مكتب</option><option>مستودع</option><option>بناء</option><option>مزرعة</option></select>
-    <input id="requestArea" required placeholder="المنطقة المطلوبة في حلب">
-    <input id="requestBudget" required placeholder="الميزانية التقريبية">
-    <textarea id="requestDetails" placeholder="تفاصيل إضافية (المساحة، عدد الغرف...)"></textarea>
-    <input id="requestContact" required placeholder="رقم هاتفك أو واتسابك">
-    <button type="submit">إرسال طلب العقار</button>
-    <small>الخدمة مجانية. سيُفتح واتساب برسالة جاهزة لإرسال الطلب.</small>
+<main id="loginScreen" class="login-wrap">
+ <section class="login-card">
+  <div class="login-icon">🔐</div><h2>تسجيل الدخول للإدارة</h2>
+  <p>هذه لوحة خاصة بمكتب الظاظا. سجّل الدخول بحساب الإدارة للوصول إلى العقارات وطلبات الزبائن والمكاتب المتعاونة.</p>
+  <form id="loginForm" class="grid-form">
+   <div class="field span2"><label for="loginEmail">البريد الإلكتروني</label><input id="loginEmail" type="email" autocomplete="username" value="tareqfzaz@gmail.com" required></div>
+   <div class="field span2"><label for="loginPassword">كلمة المرور</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="أدخل كلمة مرور الإدارة" required></div>
+   <div class="span2"><button class="btn btn-gold wide" id="loginBtn" type="submit">دخول إلى لوحة الإدارة ←</button></div>
   </form>
-</section>
-
-<div class="add-section">
-  <button class="add-btn" onclick="openForm()">
-    ➕ إضافة إعلان
-  </button>
-</div>
-
-<div class="form-box" id="formBox">
-
-  <h2 id="formTitle">إضافة إعلان عقاري</h2>
-
-  <input id="title" type="text" placeholder="عنوان العقار *">
-
-  <select id="purpose">
-    <option value="">نوع العملية *</option>
-    <option>بيع</option>
-    <option>إيجار</option>
-    <option>رهن</option>
-  </select>
-
-  <select id="type">
-    <option value="">نوع العقار *</option>
-    <option>منزل</option>
-    <option>شقة</option>
-    <option>أرض</option>
-    <option>مزرعة</option>
-    <option>محل</option>
-    <option>مكتب</option>
-    <option>فيلا</option>
-    <option>مستودع</option>
-    <option>بناء</option>
-  </select>
-
-  <select id="area">
-    <option value="">المنطقة</option>
-    <option>سيف الدولة</option>
-    <option>الأعظمية</option>
-    <option>الحمدانية</option>
-    <option>الجميلية</option>
-    <option>الزهراء</option>
-    <option>الفرقان</option>
-    <option>الموكامبو</option>
-    <option>الشهباء</option>
-    <option>ريف حلب</option>
-    <option>منطقة أخرى</option>
-  </select>
-
-  <input id="address" type="text" placeholder="العنوان التفصيلي (الشارع، جانب...)">
-
-  <input id="price" type="text" placeholder="السعر *">
-
-  <input id="size" type="text" placeholder="المساحة بالمتر">
-
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <input id="rooms" type="number" min="0" placeholder="عدد الغرف">
-    <input id="bathrooms" type="number" min="0" placeholder="عدد الحمامات">
-    <input id="floor" type="text" placeholder="الطابق">
-    <input id="year" type="text" placeholder="عمر/سنة البناء">
-  </div>
-
-  <select id="furnished">
-    <option value="">التجهيز</option>
-    <option>مفروش</option>
-    <option>غير مفروش</option>
-    <option>نصف مفروش</option>
-  </select>
-
-  <input id="features" type="text" placeholder="المميزات (مصعد، كراج، تدفئة، إطلالة...)">
-
-  <input id="phone" type="text" placeholder="رقم التواصل *">
-
-  <input id="contactName" type="text" placeholder="اسم صاحب الإعلان / المكتب">
-
-  <textarea id="description" placeholder="الوصف الكامل للعقار"></textarea>
-
-  <label style="display:block;text-align:right;margin:8px 0;font-weight:bold">📷 صور العقار</label>
-  <input id="image" type="file" accept="image/*">
-
-  <label style="display:block;text-align:right;margin:8px 0;font-weight:bold">🎥 فيديو العقار (اختياري)</label>
-  <input id="video" type="file" accept="video/*">
-
-  <button class="publish-btn" id="publishBtn" onclick="addProperty()">
-    نشر الإعلان
-  </button>
-
-</div>
-
-<h2 style="text-align:center;margin:25px 0 10px">📍 خريطة حلب العقارية</h2><div id="map" role="region" aria-label="خريطة مواقع العقارات في حلب"></div>
-<section class="search">
-
-  <input
-    id="searchInput"
-    type="text"
-    placeholder="ابحث عن عقار..."
-    onkeyup="searchProperties()"
-  >
-
-  <select id="searchType" onchange="searchProperties()">
-    <option value="">كل العقارات</option>
-    <option>منزل</option>
-    <option>شقة</option>
-    <option>أرض</option>
-    <option>مزرعة</option>
-    <option>محل</option>
-    <option>مكتب</option>
-  </select>
-
-</section>
-
-<div class="image-modal" id="imageModal" onclick="closeImageModal()"><span class="close">×</span><img id="modalImage" src="" alt="صورة العقار" onclick="event.stopPropagation()"></div>
-
-<div class="container">
-
-  <h2 class="title">🏠 أحدث العقارات</h2>
-
-  <div class="cards" id="propertyList">
-
-    <div class="empty">
-      لا توجد إعلانات مضافة حالياً
+  <div id="loginMessage" class="message hidden"></div>
+  <p class="hint" style="margin-top:16px">تسجيل الدخول متاح لبريد الإدارة المعتمد فقط. لا توجد حسابات للمكاتب العقارية الأخرى.</p>
+ </section>
+</main>
+<main id="appScreen" class="wrap hidden">
+ <div class="app">
+  <aside class="side">
+   <div class="side-title">إدارة شبكة الظاظا</div>
+   <button class="navbtn active" data-page="dashboard"><span class="ico">▦</span>لوحة العمل</button>
+   <button class="navbtn" data-page="properties"><span class="ico">🏠</span>العقارات</button>
+   <button class="navbtn" data-page="requests"><span class="ico">📥</span>طلبات الزبائن</button>
+   <button class="navbtn" data-page="offices"><span class="ico">🤝</span>المكاتب المتعاونة</button>
+   <button class="navbtn" data-page="cases"><span class="ico">🔗</span>فرص التعاون</button>
+   <div class="side-bottom"><div class="hint">الحساب الحالي</div><b id="adminLabel" style="display:block;font-size:12px;margin:5px 0 12px;overflow-wrap:anywhere">—</b><button id="logoutBtn" class="btn btn-red wide">تسجيل الخروج</button></div>
+  </aside>
+  <section class="content">
+   <div class="notice">🔐 <b>خصوصية أولاً:</b> هذه لوحة داخلية. لا توجد حسابات للمكاتب الأخرى، ولا يمكنها فتح بيانات عقاراتك أو طلبات زبائنك. أنت تسجّل المكتب وتتواصل معه مباشرة عند الحاجة.</div>
+   <section id="page-dashboard" class="page">
+    <div class="page-head"><div><h2>لوحة العمل</h2><p>ملخّص شغلك اليوم، من مكان واحد.</p></div><span class="pill done">● جلسة إدارة خاصة</span></div>
+    <div class="cards">
+     <article class="stat"><div class="stat-top"><span>العقارات المحفوظة</span><span class="stat-ico">🏠</span></div><strong id="countProperties">—</strong><small>سجل عقارات مكتب الظاظا</small></article>
+     <article class="stat"><div class="stat-top"><span>طلبات الزبائن المفتوحة</span><span class="stat-ico">📥</span></div><strong id="countRequests">—</strong><small>بانتظار المتابعة أو الإغلاق</small></article>
+     <article class="stat"><div class="stat-top"><span>المكاتب المتعاونة</span><span class="stat-ico">🤝</span></div><strong id="countOffices">—</strong><small>جهات اتصال بدون حسابات</small></article>
+     <article class="stat"><div class="stat-top"><span>فرص التعاون المفتوحة</span><span class="stat-ico">🔗</span><strong id="countCases">—</strong></div><small>متابعة العروض والطلبات مع المكاتب</small></article>
     </div>
-
-  </div>
-
-</div>
-
-<footer>
-  <h3>شركة عقارات الظاظا</h3>
-  <p>شبكة عقارات الظاظا — بيع • شراء • إيجار</p>
-  <p>حلب والمناطق المحيطة</p>
-</footer>
-
-<!-- v4: reliable edit/delete buttons + fresh cache -->
+    <section class="panel"><div class="panel-head"><div><h3>اختصارات سريعة</h3><p>افتح القسم المطلوب مباشرة.</p></div></div>
+     <div class="quick-grid">
+      <button class="quick" data-goto="properties"><span>➕</span><strong>إضافة عقار</strong><small>سجّل عقاراً جديداً وعدّل بياناته لاحقاً.</small></button>
+      <button class="quick" data-goto="requests"><span>📝</span><strong>تسجيل طلب زبون</strong><small>احفظ المنطقة والميزانية والتفاصيل ومعلومات التواصل.</small></button>
+      <button class="quick" data-goto="offices"><span>🤝</span><strong>إضافة مكتب متعاون</strong><small>احفظ رقم المكتب والمناطق التي يعمل فيها.</small></button>
+      <button class="quick" data-goto="cases"><span>🔗</span><strong>تسجيل فرصة تعاون</strong><small>اربط طلباً أو عقاراً بمكتب وتابع الرد والاتفاق.</small></button>
+     </div>
+    </section>
+    <section class="panel"><div class="panel-head"><div><h3>المتابعات القادمة</h3><p>فرص التعاون التي لها موعد متابعة اليوم أو متأخرة.</p></div><button class="btn btn-light btn-small" data-goto="cases">عرض الكل ←</button></div><div id="followUps"><div class="empty">جاري تحميل المتابعات…</div></div></section>
+   </section>
+   <section id="page-properties" class="page hidden">
+    <div class="page-head"><div><h2>إدارة العقارات</h2><p>سجّل عقاراتك، عدّل بياناتها، واحتفظ بتفاصيل التواصل في مكان خاص.</p></div><button class="btn btn-gold" id="newPropertyBtn">＋ إضافة عقار</button></div>
+    <div class="panel"><div class="toolbar"><input id="propertySearch" placeholder="ابحث بالعنوان أو المنطقة أو السعر…"><select id="propertyFilter"><option value="">كل العمليات</option><option>بيع</option><option>إيجار</option><option>رهن</option></select></div><div id="propertiesList"><div class="empty">جاري تحميل العقارات…</div></div></div>
+   </section>
+   <section id="page-requests" class="page hidden">
+    <div class="page-head"><div><h2>طلبات الزبائن</h2><p>سجّل طلبات الشراء والإيجار وتابع حالة كل زبون.</p></div><button class="btn btn-gold" id="newRequestBtn">＋ تسجيل طلب</button></div>
+    <div class="panel"><div class="toolbar"><input id="requestSearch" placeholder="ابحث بالمنطقة أو رقم الهاتف أو الميزانية…"><select id="requestFilter"><option value="">كل الحالات</option><option>جديد</option><option>تم التواصل</option><option>مكتمل</option><option>ملغي</option></select></div><div id="requestsList"><div class="empty">جاري تحميل الطلبات…</div></div></div>
+   </section>
+   <section id="page-offices" class="page hidden">
+    <div class="page-head"><div><h2>المكاتب المتعاونة</h2><p>دفتر جهات اتصال فقط؛ المكاتب لا تحتاج إلى حساب أو اشتراك.</p></div><button class="btn btn-gold" id="newOfficeBtn">＋ إضافة مكتب</button></div>
+    <div class="panel"><div class="toolbar"><input id="officeSearch" placeholder="ابحث باسم المكتب أو المنطقة أو الرقم…"><select id="officeFilter"><option value="">كل المكاتب</option><option>نشط</option><option>متوقف</option></select></div><div id="officesList"><div class="empty">جاري تحميل المكاتب…</div></div></div>
+   </section>
+   <section id="page-cases" class="page hidden">
+    <div class="page-head"><div><h2>فرص التعاون</h2><p>وثّق كل تعاون مع مكتب: المطلوب، التواصل، العمولة، وموعد المتابعة.</p></div><button class="btn btn-gold" id="newCaseBtn">＋ فرصة تعاون</button></div>
+    <div class="panel"><div class="toolbar"><input id="caseSearch" placeholder="ابحث بعنوان الفرصة أو المنطقة أو المكتب…"><select id="caseFilter"><option value="">كل الحالات</option><option>جديد</option><option>تم التواصل مع المكتب</option><option>بانتظار الرد</option><option>تم الاتفاق</option><option>مغلق</option></select></div><div id="casesList"><div class="empty">جاري تحميل فرص التعاون…</div></div></div>
+   </section>
+  </section>
+ </div>
+ <div class="foot">شبكة عقارات الظاظا · بياناتك خاصة · إدارة من حساب واحد</div>
+</main>
+<div id="modalBack" class="modal-back hidden"><section class="modal"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><h3 id="modalTitle">إضافة سجل</h3><button type="button" id="modalClose" class="btn btn-light">✕ إغلاق</button></div><div id="modalBody"></div></section></div>
+<div id="toast" class="message hidden" style="position:fixed;bottom:15px;left:15px;right:15px;z-index:1200;max-width:500px;margin:auto;box-shadow:0 10px 35px #0002"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js"></script>
-
 <script>
-
-const SUPABASE_URL = "https://kypzypsonkzfrhpldtmp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-";
-
-const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-const ADMIN_EMAIL = "tareqfzaz@gmail.com";
-let isAdmin = false;
-
-function updateAdminUI(){
-  const adminMenu=document.getElementById("adminAddMenu");
-  const requestsMenu=document.getElementById("adminRequestsMenu");
-  const adminBar=document.getElementById("adminBar");
-  const addSection=document.querySelector(".add-section");
-  const formBox=document.getElementById("formBox");
-  if(adminMenu)adminMenu.hidden=!isAdmin;
-  if(requestsMenu)requestsMenu.hidden=!isAdmin;
-  if(adminBar)adminBar.hidden=!isAdmin;
-  if(addSection)addSection.hidden=!isAdmin;
-  if(formBox&&!isAdmin){formBox.hidden=true;formBox.style.display="none";}
-  if(!isAdmin && ["إضافة إعلان عقاري","طلبات الزبائن"].includes(document.getElementById("viewTitle")?.textContent))goHome();
+const SUPABASE_URL="https://kypzypsonkzfrhpldtmp.supabase.co";
+const SUPABASE_KEY="sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-";
+const ADMIN_EMAIL="tareqfzaz@gmail.com";
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null, properties=[], requests=[], offices=[], cases=[];
+const $=id=>document.getElementById(id);
+const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+function toast(msg,kind){const t=$("toast");t.textContent=msg;t.className="message "+(kind||"ok");t.classList.remove("hidden");setTimeout(()=>t.classList.add("hidden"),3500);}
+function loginMessage(msg,bad){const e=$("loginMessage");e.textContent=msg;e.className="message "+(bad?"error":"ok");e.classList.remove("hidden");}
+function setBusy(el,busy,label){if(!el)return;el.disabled=busy;if(busy){el.dataset.oldText=el.textContent;el.textContent=label||"لحظة…";}else if(el.dataset.oldText){el.textContent=el.dataset.oldText;delete el.dataset.oldText;}}
+async function verifySession(){
+ const {data,error}=await db.auth.getSession();
+ if(error){$("loginScreen").classList.remove("hidden");return;}
+ const user=data.session&&data.session.user;
+ if(user&&String(user.email||"").toLowerCase()===ADMIN_EMAIL){currentUser=user;showApp();await refreshAll();}
+ else{if(user)await db.auth.signOut();currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}
 }
-
-async function syncAdminSession(){
-  const {data}=await supabaseClient.auth.getSession();
-  isAdmin=String(data?.session?.user?.email||"").toLowerCase()===ADMIN_EMAIL;
-  if(data?.session && !isAdmin) await supabaseClient.auth.signOut();
-  updateAdminUI();
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("adminSignOut")?.addEventListener("click",async()=>{
-    await supabaseClient.auth.signOut();
-    isAdmin=false;updateAdminUI();goHome();
-  });
+function showApp(){$("loginScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");$("adminLabel").textContent=currentUser.email;}
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();const email=$("loginEmail").value.trim().toLowerCase(),password=$("loginPassword").value,btn=$("loginBtn");
+ if(email!==ADMIN_EMAIL){loginMessage("هذا البريد غير مخوّل. استخدم بريد الإدارة المعتمد.",true);return;}
+ setBusy(btn,true,"جاري التحقق…");
+ const {data,error}=await db.auth.signInWithPassword({email,password});
+ setBusy(btn,false);
+ if(error||!data.user){loginMessage("تعذّر تسجيل الدخول. تأكد من البريد وكلمة المرور.",true);return;}
+ if(String(data.user.email||"").toLowerCase()!==ADMIN_EMAIL){await db.auth.signOut();loginMessage("هذا الحساب غير مخوّل لإدارة الشبكة.",true);return;}
+ currentUser=data.user;showApp();await refreshAll();toast("أهلاً بك، تم فتح لوحة الإدارة.");
 });
-
-let properties = [];
-const importedPropertyDefault = {
-  id: "whatsapp-1539",
-  title: "شقة للبيع سوبر ديلوكس - سيف الدولة",
-  type: "شقة", area: "سيف الدولة", price: "75,000 دولار + بازار", size: "120 م²",
-  phone: "0957839713", image: "",
-  description: "العملية: بيع\nالعنوان: سيف الدولة - مفرق شماسي - قريب سنتر الفهد\nالغرف: 4 غرف محررات\nالطابق: الثاني أمامي\nالمميزات: قبلي شمالي • سوبر ديلوكس • 8 ألواح طاقة شمسية + بطارية ليثيوم • خزان 2000 لتر على السطح • جاهز للسكن\nصاحب الإعلان: مكتب الظاظا للخدمات العقارية في حلب وسوريا"
-};
-let importedProperty = JSON.parse(localStorage.getItem("aqaarat_imported_property") || "null") || importedPropertyDefault;
-
-let editingId = null;
-const areaCoords = {"سيف الدولة":[36.1967,37.1438],"الأعظمية":[36.1918,37.1455],"الحمدانية":[36.165,37.115],"الجميلية":[36.205,37.157],"الزهراء":[36.232,37.166],"الفرقان":[36.218,37.145],"الموكامبو":[36.218,37.174],"الشهباء":[36.24,37.18],"ريف حلب":[36.25,37.1]};
-const map=L.map("map").setView([36.2021,37.1343],12); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map); let markers=[];
-
-
-function openForm() {
-
-  const form = document.getElementById("formBox");
-
-  form.style.display =
-    form.style.display === "block"
-      ? "none"
-      : "block";
-
-  form.scrollIntoView({
-    behavior: "smooth"
-  });
+$("logoutBtn").addEventListener("click",async()=>{await db.auth.signOut();currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");$("loginPassword").value="";});
+db.auth.onAuthStateChange((_event,session)=>{if(!session){currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}});
+function go(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$("page-"+page).classList.remove("hidden");document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.goto)));
+async function fetchRows(table,order="created_at"){const {data,error}=await db.from(table).select("*").order(order,{ascending:false});if(error)throw error;return data||[];}
+async function refreshAll(){
+ if(!currentUser)return;
+ try{
+  [properties,requests,offices,cases]=await Promise.all([fetchRows("properties"),fetchRows("customer_requests"),fetchRows("partner_offices"),fetchRows("collaboration_cases")]);
+  renderAll();
+ }catch(e){console.error(e);toast("تعذّر تحميل بعض البيانات. تأكد من صلاحيات قاعدة البيانات ثم أعد المحاولة.","error");}
 }
-
-
-/* تحميل الإعلانات المحفوظة */
-
-async function loadProperties() {
-
-  const { data, error } =
-    await supabaseClient
-      .from("properties")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
-
-  if (error) {
-
-    console.error(error);
-
-    alert("حدث خطأ أثناء تحميل الإعلانات");
-
-    return;
-  }
-
-  const hiddenImported = localStorage.getItem("aqaarat_imported_deleted") === "1";
-  properties = hiddenImported ? (data || []) : [importedProperty, ...(data || []).filter(p => p.id !== importedProperty.id)];
-
-  displayProperties(properties); drawMarkers(properties);
+function renderAll(){
+ $("countProperties").textContent=properties.length;
+ $("countRequests").textContent=requests.filter(r=>r.status==="جديد"||r.status==="تم التواصل").length;
+ $("countOffices").textContent=offices.filter(o=>o.status==="نشط").length;
+ $("countCases").textContent=cases.filter(c=>!["تم الاتفاق","مغلق"].includes(c.status)).length;
+ renderProperties();renderRequests();renderOffices();renderCases();renderFollowups();
 }
-
-
-/* إضافة إعلان */
-
-async function addProperty() {
-  if(!isAdmin){alert("إضافة العقارات متاحة لحساب الإدارة فقط.");return;}
-  const btn=document.getElementById("publishBtn");
-  if(btn.disabled)return;
-  const title=document.getElementById("title").value.trim();
-  const purpose=document.getElementById("purpose").value;
-  const type=document.getElementById("type").value;
-  const area=document.getElementById("area").value;
-  const address=document.getElementById("address").value.trim();
-  const price=document.getElementById("price").value.trim();
-  const size=document.getElementById("size").value.trim();
-  const rooms=document.getElementById("rooms").value.trim();
-  const bathrooms=document.getElementById("bathrooms").value.trim();
-  const floor=document.getElementById("floor").value.trim();
-  const year=document.getElementById("year").value.trim();
-  const furnished=document.getElementById("furnished").value;
-  const features=document.getElementById("features").value.trim();
-  const phone=document.getElementById("phone").value.trim();
-  const contactName=document.getElementById("contactName").value.trim();
-  const description=document.getElementById("description").value.trim();
-  const videoInput=document.getElementById("video");
-  const imageInput=document.getElementById("image");
-
-  if(!title||!purpose||!type||!area||!price||!phone){
-    alert("يرجى تعبئة الحقول الأساسية: العملية، نوع العقار، المنطقة، السعر ورقم التواصل.");
-    return;
-  }
-
-  btn.disabled=true;
-  const oldBtnText=btn.textContent;
-  btn.textContent="⏳ جارٍ الحفظ...";
-
-  try{
-    const details=[
-      purpose&&"العملية: "+purpose,
-      address&&"العنوان: "+address,
-      rooms&&"الغرف: "+rooms,
-      bathrooms&&"الحمامات: "+bathrooms,
-      floor&&"الطابق: "+floor,
-      year&&"سنة/عمر البناء: "+year,
-      furnished&&"التجهيز: "+furnished,
-      features&&"المميزات: "+features,
-      contactName&&"صاحب الإعلان: "+contactName
-    ].filter(Boolean).join("\n");
-    const fullDescription=details+(description?"\nالوصف: "+description:"");
-
-    let imageData="";
-    if(imageInput.files.length){
-      imageData=await new Promise((resolve,reject)=>{
-        const reader=new FileReader();
-        reader.onload=()=>resolve(reader.result);
-        reader.onerror=()=>reject(new Error("تعذر قراءة صورة العقار"));
-        reader.readAsDataURL(imageInput.files[0]);
-      });
-    }
-
-    // نرفع الفيديو أولاً ثم نحفظ رابط الفيديو مع الإعلان نفسه.
-    // هذا يتجنب خطوة UPDATE المنفصلة التي كانت تسبب رسالة "تعذر ربط الفيديو".
-    let videoUrl=null;
-    let uploadedVideoPath=null;
-
-    if(videoInput.files.length){
-      const {data:sessionData}=await supabaseClient.auth.getSession();
-      if(!sessionData?.session?.access_token) throw new Error("سجّل الدخول بحساب الإدارة قبل رفع الفيديو.");
-      const videoFile=videoInput.files[0];
-      if(videoFile.size>50*1024*1024) throw new Error("الفيديو أكبر من 50 ميغابايت");
-
-      const ext=(videoFile.name.split(".").pop()||"mp4").toLowerCase().replace(/[^a-z0-9]/g,"")||"mp4";
-      const path="property-"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
-      uploadedVideoPath=path;
-      btn.textContent="⏳ جارٍ رفع الفيديو...";
-
-      const upload=await new Promise((resolve,reject)=>{
-        const tusUpload=new tus.Upload(videoFile,{
-          endpoint:"https://kypzypsonkzfrhpldtmp.storage.supabase.co/storage/v1/upload/resumable",
-          retryDelays:[0,3000,5000,10000,20000],
-          headers:{apikey:SUPABASE_KEY,authorization:"Bearer "+sessionData.session.access_token,"x-upsert":"false"},
-          uploadDataDuringCreation:true,
-          removeFingerprintOnSuccess:true,
-          chunkSize:6*1024*1024,
-          metadata:{bucketName:"property-videos",objectName:path,contentType:videoFile.type||"video/mp4",cacheControl:"3600"},
-          onError:error=>reject(new Error(error?.message||"تعذر رفع الفيديو")),
-          onProgress:(uploaded,total)=>{btn.textContent="⏳ رفع الفيديو "+Math.round(uploaded/total*100)+"%..."},
-          onSuccess:()=>resolve({error:null})
-        });
-        tusUpload.findPreviousUploads().then(previous=>{if(previous.length)tusUpload.resumeFromPreviousUpload(previous[0]);tusUpload.start();}).catch(reject);
-      });
-      if(upload.error) throw new Error("تعذر رفع الفيديو: "+upload.error.message);
-      videoUrl=supabaseClient.storage.from("property-videos").getPublicUrl(path).data.publicUrl;
-    }
-
-    const saved=await createProperty(imageData,title,type,area,price,size,phone,fullDescription, videoUrl, true);
-    if(!saved || !saved.id) throw new Error("تعذر حفظ الإعلان");
-
-    if(videoUrl){
-      properties=properties.map(p=>String(p.id)===String(saved.id)?Object.assign({},p,saved):p);
-      displayProperties(properties);
-      drawMarkers(properties);
-    }
-
-    editingId=null;
-    clearForm();
-    document.getElementById("formBox").style.display="none";
-    document.getElementById("formTitle").textContent="إضافة إعلان عقاري";
-    btn.textContent="نشر الإعلان";
-    alert(videoInput.files.length ? "تم نشر الإعلان والفيديو بنجاح ✅" : "تم نشر الإعلان بنجاح ✅");
-  }catch(err){
-    console.error(err);
-    alert(err && err.message ? err.message : "ما قدرنا نحفظ الإعلان. حاول مرة ثانية.");
-  }finally{
-    btn.disabled=false;
-    if(btn.textContent.startsWith("⏳")) btn.textContent=oldBtnText;
-  }
+function emptyHtml(title,desc){return '<div class="empty"><b>'+esc(title)+'</b>'+esc(desc)+'</div>';}
+function tableHtml(headers,rows){if(!rows.length)return emptyHtml("ما في سجلات لحد الآن","اضغط زر الإضافة للبدء. كل السجلات تبقى خاصة بحساب الإدارة.");return '<div class="table-wrap"><table><thead><tr>'+headers.map(h=>"<th>"+h+"</th>").join("")+'</tr></thead><tbody>'+rows.join("")+'</tbody></table></div>';}
+function pill(status){let cls=["مكتمل","تم الاتفاق","نشط"].includes(status)?"done":["ملغي","مغلق","متوقف"].includes(status)?"off":"new";return '<span class="pill '+cls+'">'+esc(status||"—")+'</span>';}
+function renderProperties(){
+ const q=($("propertySearch").value||"").trim().toLowerCase(),f=$("propertyFilter").value;
+ const rows=properties.filter(p=>(!f||p.type===f||p.purpose===f)&&[p.title,p.area,p.price,p.description,p.phone,p.type,p.size].join(" ").toLowerCase().includes(q));
+ $("propertiesList").innerHTML=tableHtml(["العقار","العملية / النوع","السعر","التواصل","إجراءات"],rows.map(p=>'<tr><td class="primary-cell">'+esc(p.title)+'<span class="subcell">'+esc(p.area||"منطقة غير محددة")+(p.size?" · "+esc(p.size):"")+'</span></td><td>'+esc(p.type||"—")+'<span class="subcell">'+esc(p.purpose||"")+'</span></td><td>'+esc(p.price||"—")+'</td><td>'+esc(p.phone||"—")+'</td><td><div class="actions"><button class="btn btn-light btn-small" data-edit-property="'+p.id+'">تعديل</button><button class="btn btn-red btn-small" data-delete-property="'+p.id+'">حذف</button></div></td></tr>')));
+ $("propertiesList").querySelectorAll("[data-edit-property]").forEach(b=>b.onclick=()=>openProperty(properties.find(p=>String(p.id)===b.dataset.editProperty)));
+ $("propertiesList").querySelectorAll("[data-delete-property]").forEach(b=>b.onclick=()=>deleteRow("properties",b.dataset.deleteProperty,"العقار"));
 }
-
-async function createProperty(image, title, type, area, price, size, phone, description, videoUrl, keepFormOpen) {
-  let result;
-  if (editingId === importedProperty.id) {
-    const old = properties.find(p => p.id === editingId) || importedProperty;
-    importedProperty = Object.assign({}, old, {title,type,area,price,size,phone,description,image:image || old?.image || "",video_url:videoUrl || old?.video_url || ""});
-    localStorage.setItem("aqaarat_imported_property", JSON.stringify(importedProperty));
-    result = {data: importedProperty, error: null};
-  } else if (editingId) {
-    const old = properties.find(p => p.id === editingId);
-    result = await supabaseClient.from("properties")
-      .update({title,type,area,price,size,phone,description,image:image || old?.image || "",video_url:videoUrl || old?.video_url || null})
-      .eq("id",editingId).select().single();
-  } else {
-    result = await supabaseClient.from("properties")
-      .insert([{title,type,area,price,size,phone,description,image,video_url:videoUrl||null}]).select().single();
-  }
-
-  const data=result.data, error=result.error;
-  if (error) {
-    console.error(error);
-    throw new Error("ما قدرنا نحفظ الإعلان: "+(error.message||"خطأ غير معروف"));
-  }
-
-  const wasEditing = !!editingId;
-  if(wasEditing){
-    properties=properties.map(p=>String(p.id)===String(editingId)?data:p);
-  } else {
-    properties.unshift(data);
-  }
-  displayProperties(properties);
-  drawMarkers(properties);
-  return data;
+function renderRequests(){
+ const q=($("requestSearch").value||"").trim().toLowerCase(),f=$("requestFilter").value;
+ const rows=requests.filter(r=>(!f||r.status===f)&&[r.purpose,r.property_type,r.area,r.budget,r.contact,r.details].join(" ").toLowerCase().includes(q));
+ $("requestsList").innerHTML=tableHtml(["الطلب","الميزانية / التواصل","الحالة","إجراءات"],rows.map(r=>'<tr><td class="primary-cell">'+esc(r.purpose)+" "+esc(r.property_type)+'<span class="subcell">'+esc(r.area)+' · '+esc(new Date(r.created_at).toLocaleDateString("ar-SY"))+'</span><span class="subcell">'+esc(r.details||"بدون تفاصيل إضافية")+'</span></td><td>'+esc(r.budget)+'<span class="subcell">'+esc(r.contact)+'</span></td><td><select class="status-select" data-request-status="'+r.id+'">'+["جديد","تم التواصل","مكتمل","ملغي"].map(s=>'<option '+(r.status===s?"selected":"")+'>'+s+'</option>').join("")+'</select></td><td><div class="actions"><a class="btn btn-green btn-small" href="https://wa.me/'+esc((r.contact||"").replace(/[^0-9]/g,""))+'" target="_blank" rel="noopener">واتساب</a><button class="btn btn-red btn-small" data-delete-request="'+r.id+'">حذف</button></div></td></tr>')));
+ $("requestsList").querySelectorAll("[data-request-status]").forEach(s=>s.onchange=()=>updateRow("customer_requests",s.dataset.requestStatus,{status:s.value},"تم تحديث حالة الطلب."));
+ $("requestsList").querySelectorAll("[data-delete-request]").forEach(b=>b.onclick=()=>deleteRow("customer_requests",b.dataset.deleteRequest,"طلب الزبون"));
 }
-
-
-/* عرض الإعلانات */
-
-function clearForm(){
-  ["title","address","price","size","rooms","bathrooms","floor","year","features","phone","contactName","description"].forEach(id=>document.getElementById(id).value="");
-  ["purpose","type","area","furnished"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("image").value="";
-  document.getElementById("video").value="";
+function renderOffices(){
+ const q=($("officeSearch").value||"").trim().toLowerCase(),f=$("officeFilter").value;
+ const rows=offices.filter(o=>(!f||o.status===f)&&[o.office_name,o.contact_name,o.phone,o.areas,o.notes].join(" ").toLowerCase().includes(q));
+ $("officesList").innerHTML=tableHtml(["المكتب / المسؤول","المناطق","الحالة","إجراءات"],rows.map(o=>'<tr><td class="primary-cell">'+esc(o.office_name)+'<span class="subcell">'+esc(o.contact_name||"")+' · '+esc(o.phone||"لا يوجد رقم")+'</span></td><td>'+esc(o.areas||"—")+'</td><td>'+pill(o.status)+'</td><td><div class="actions"><button class="btn btn-light btn-small" data-edit-office="'+o.id+'">تعديل</button><button class="btn btn-red btn-small" data-delete-office="'+o.id+'">حذف</button></div></td></tr>')));
+ $("officesList").querySelectorAll("[data-edit-office]").forEach(b=>b.onclick=()=>openOffice(offices.find(o=>String(o.id)===b.dataset.editOffice)));
+ $("officesList").querySelectorAll("[data-delete-office]").forEach(b=>b.onclick=()=>deleteRow("partner_offices",b.dataset.deleteOffice,"المكتب"));
 }
-
-window.editProperty = async function(id){
-  if(!isAdmin){alert("تعديل العقارات متاح لحساب الإدارة فقط.");return;}
-  if(id === importedProperty.id) localStorage.removeItem("aqaarat_imported_deleted");
-  let p=properties.find(x=>String(x.id)===String(id));
-  if(!p && id !== importedProperty.id){
-    const {data,error}=await supabaseClient.from("properties").select("*").eq("id",id).maybeSingle();
-    if(error){ console.error(error); alert("تعذر تحميل الإعلان للتعديل. حاول مرة ثانية."); return; }
-    p=data;
-  }
-  if(!p){ alert("لم يتم العثور على الإعلان."); return; }
-  editingId=id;
-  document.getElementById("formBox").style.display="block";
-  document.getElementById("formTitle").textContent="✏️ تعديل الإعلان";
-  document.getElementById("publishBtn").textContent="حفظ التعديلات";
-  document.getElementById("title").value=p.title||"";
-  document.getElementById("type").value=p.type||"";
-  document.getElementById("area").value=p.area||"";
-  document.getElementById("price").value=p.price||"";
-  document.getElementById("size").value=p.size||"";
-  document.getElementById("phone").value=p.phone||"";
-  const lines=String(p.description||"").split("\n");
-  const get=(label)=>{const x=lines.find(v=>v.startsWith(label));return x?x.slice(label.length).trim():""};
-  document.getElementById("purpose").value=get("العملية: ");
-  document.getElementById("address").value=get("العنوان: ");
-  document.getElementById("rooms").value=get("الغرف: ");
-  document.getElementById("bathrooms").value=get("الحمامات: ");
-  document.getElementById("floor").value=get("الطابق: ");
-  document.getElementById("year").value=get("سنة/عمر البناء: ");
-  document.getElementById("furnished").value=get("التجهيز: ");
-  document.getElementById("features").value=get("المميزات: ");
-  document.getElementById("contactName").value=get("صاحب الإعلان: ");
-  document.getElementById("video").value="";
-  document.getElementById("description").value=get("الوصف: ");
-  document.getElementById("formBox").scrollIntoView({behavior:"smooth"});
+function renderCases(){
+ const q=($("caseSearch").value||"").trim().toLowerCase(),f=$("caseFilter").value;
+ const rows=cases.filter(c=>(!f||c.status===f)&&[c.title,c.purpose,c.area,c.budget,c.contact,c.notes,officeName(c.office_id),c.commission].join(" ").toLowerCase().includes(q));
+ $("casesList").innerHTML=tableHtml(["فرصة التعاون","المكتب / التواصل","المتابعة","الحالة","إجراءات"],rows.map(c=>'<tr><td class="primary-cell">'+esc(c.title)+'<span class="subcell">'+esc(c.purpose)+' · '+esc(c.area||"")+' · ميزانية '+esc(c.budget||"غير محددة")+'</span><span class="subcell">'+esc(c.notes||"")+'</span></td><td>'+esc(officeName(c.office_id)||"لم يحدد مكتب")+'<span class="subcell">'+esc(c.contact||"")+'</span><span class="subcell">العمولة: '+esc(c.commission||"غير محددة")+'</span></td><td>'+esc(c.follow_up_at||"غير محدد")+'</td><td><select class="status-select" data-case-status="'+c.id+'">'+["جديد","تم التواصل مع المكتب","بانتظار الرد","تم الاتفاق","مغلق"].map(s=>'<option '+(c.status===s?"selected":"")+'>'+s+'</option>').join("")+'</select></td><td><div class="actions"><button class="btn btn-light btn-small" data-edit-case="'+c.id+'">تعديل</button><button class="btn btn-red btn-small" data-delete-case="'+c.id+'">حذف</button></div></td></tr>')));
+ $("casesList").querySelectorAll("[data-case-status]").forEach(s=>s.onchange=()=>updateRow("collaboration_cases",s.dataset.caseStatus,{status:s.value},"تم تحديث حالة التعاون."));
+ $("casesList").querySelectorAll("[data-edit-case]").forEach(b=>b.onclick=()=>openCase(cases.find(c=>String(c.id)===b.dataset.editCase)));
+ $("casesList").querySelectorAll("[data-delete-case]").forEach(b=>b.onclick=()=>deleteRow("collaboration_cases",b.dataset.deleteCase,"فرصة التعاون"));
 }
-
-window.deleteProperty = async function(id){
-  if(!isAdmin){alert("حذف العقارات متاح لحساب الإدارة فقط.");return;}
-  if(!confirm("هل أنت متأكد من حذف هذا الإعلان؟"))return;
-  if(id === importedProperty.id){
-    localStorage.setItem("aqaarat_imported_deleted","1");
-    properties=properties.filter(p=>p.id!==id);
-    displayProperties(properties);
-    drawMarkers(properties);
-    alert("تم حذف الإعلان بنجاح ✅");
-    return;
-  }
-  const {error}=await supabaseClient.from("properties").delete().eq("id",id);
-  if(error){alert("تعذر حذف الإعلان. قد تكون صلاحية الحذف غير مفعلة.");return}
-  properties=properties.filter(p=>p.id!==id);
-  displayProperties(properties);
-  drawMarkers(properties);
+function officeName(id){const o=offices.find(x=>String(x.id)===String(id));return o?o.office_name:"";}
+function renderFollowups(){
+ const due=cases.filter(c=>c.follow_up_at&&c.follow_up_at<=today()&&!["تم الاتفاق","مغلق"].includes(c.status)).sort((a,b)=>(a.follow_up_at||"").localeCompare(b.follow_up_at||"")).slice(0,6);
+ $("followUps").innerHTML=due.length?tableHtml(["فرصة","المكتب","موعد المتابعة","الحالة"],due.map(c=>'<tr><td class="primary-cell">'+esc(c.title)+'</td><td>'+esc(officeName(c.office_id)||"غير محدد")+'</td><td>'+esc(c.follow_up_at)+'</td><td>'+pill(c.status)+'</td></tr>')):emptyHtml("ما عندك متابعات مستحقة","لما تسجل موعد متابعة لفرصة تعاون، رح تظهر هون إذا صار موعدها اليوم أو تأخر.");
 }
-
-function drawMarkers(list){
-  markers.forEach(m=>map.removeLayer(m)); markers=[];
-  list.forEach(p=>{
-    const pos=areaCoords[p.area];
-    if(pos){
-      const m=L.marker(pos).addTo(map).bindPopup("<b>"+String(p.title||"").replace(/</g,"&lt;")+"</b><br>📍 "+String(p.area||"").replace(/</g,"&lt;"));
-      markers.push(m);
-    }
-  });
+async function updateRow(table,id,changes,msg){const {error}=await db.from(table).update(changes).eq("id",id);if(error){console.error(error);toast("ما قدرنا نحفظ التعديل. "+error.message,"error");return;}toast(msg);await refreshAll();}
+async function deleteRow(table,id,label){if(!confirm("متأكد بدك تحذف "+label+"؟ هذا الإجراء لا يمكن التراجع عنه."))return;const {error}=await db.from(table).delete().eq("id",id);if(error){console.error(error);toast("تعذر الحذف: "+error.message,"error");return;}toast("تم حذف "+label+".");await refreshAll();}
+function openModal(title,body){$("modalTitle").textContent=title;$("modalBody").innerHTML=body;$("modalBack").classList.remove("hidden");}
+function closeModal(){$("modalBack").classList.add("hidden");$("modalBody").innerHTML="";}
+$("modalClose").onclick=closeModal;$("modalBack").addEventListener("click",e=>{if(e.target===$("modalBack"))closeModal();});
+function field(id,label,value,placeholder,type){return '<div class="field"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="'+(type||"text")+'" value="'+esc(value||"")+'" placeholder="'+esc(placeholder||"")+'"></div>';}
+function selectField(id,label,values,value){return '<div class="field"><label for="'+id+'">'+label+'</label><select id="'+id+'">'+values.map(v=>'<option '+(v===value?"selected":"")+'>'+esc(v)+'</option>').join("")+'</select></div>';}
+function textArea(id,label,value,placeholder){return '<div class="field span2"><label for="'+id+'">'+label+'</label><textarea id="'+id+'" placeholder="'+esc(placeholder||"")+'">'+esc(value||"")+'</textarea></div>';}
+function modalButtons(){return '<div class="modal-actions span2"><button type="submit" class="btn btn-gold">💾 حفظ البيانات</button><button type="button" class="btn btn-light" id="cancelModal">إلغاء</button></div>';}
+function openProperty(p){
+ p=p||{};const edit=!!p.id;
+ openModal(edit?"تعديل بيانات العقار":"إضافة عقار جديد",'<form id="propertyForm" class="grid-form">'+field("pTitle","عنوان العقار *",p.title,"مثال: شقة للبيع في سيف الدولة")+selectField("pPurpose","العملية",["بيع","إيجار","رهن"],p.purpose||"بيع")+selectField("pType","نوع العقار",["شقة","منزل","فيلا","أرض","محل","مكتب","مستودع","بناء","مزرعة"],p.type||"شقة")+field("pArea","المنطقة",p.area,"الحي أو الشارع")+field("pPrice","السعر",p.price,"مثال: 65000 دولار")+field("pSize","المساحة",p.size,"مثال: 120 م²")+field("pPhone","رقم التواصل",p.phone,"رقم المالك أو المكتب")+field("pImage","رابط صورة (اختياري)",p.image,"https://…","url")+field("pVideo","رابط فيديو (اختياري)",p.video_url,"https://…","url")+textArea("pDescription","تفاصيل العقار",p.description,"عدد الغرف، الطابق، الإكساء، الملكية…")+modalButtons()+'</form>');
+ $("cancelModal").onclick=closeModal;
+ $("propertyForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const row={title:$("pTitle").value.trim(),purpose:$("pPurpose").value,type:$("pType").value,area:$("pArea").value.trim(),price:$("pPrice").value.trim(),size:$("pSize").value.trim(),phone:$("pPhone").value.trim(),image:$("pImage").value.trim(),video_url:$("pVideo").value.trim(),description:$("pDescription").value.trim()};if(!row.title){setBusy(btn,false);toast("اكتب عنوان العقار أولاً.","error");return;}const result=edit?await db.from("properties").update(row).eq("id",p.id):await db.from("properties").insert(row);setBusy(btn,false);if(result.error){toast("ما قدرنا نحفظ العقار: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تحديث العقار.":"تم حفظ العقار بشكل خاص.");await refreshAll();};
 }
-
-function displayProperties(list) {
-  const container=document.getElementById("propertyList");
-  if(!list.length){container.innerHTML='<div class="empty">لا توجد إعلانات مطابقة</div>';return;}
-  container.innerHTML="";
-  list.forEach(function(property){
-    const card=document.createElement("div");
-    card.className="card"; card.dataset.id=String(property.id||"");
-    let imageHTML=property.image
-      ? '<img class="card-image" src="'+property.image+'" alt="صورة العقار" onclick="openImageModal(this.src)">'
-      : '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:55px;">🏠</div>';
-
-    // توحيد رقم الهاتف السوري بصيغة واتساب الدولية: 09xxxxxxxx -> 9639xxxxxxxx
-    const rawPhone=String(property.phone||"").trim();
-    const arabicDigits="٠١٢٣٤٥٦٧٨٩";
-    let digits=rawPhone.replace(/[٠-٩]/g,d=>String(arabicDigits.indexOf(d))).replace(/[^0-9]/g,"");
-    if(digits.startsWith("00")) digits=digits.slice(2);
-    if(digits.startsWith("0")) digits="963"+digits.slice(1);
-    else if(digits.startsWith("9") && digits.length===9) digits="963"+digits;
-    else if(!digits.startsWith("963")) digits="963"+digits;
-    const whatsappNumber=digits;
-    const cleanPhone=digits;
-    const desc=String(property.description||"");
-    const lines=desc.split("\n").filter(Boolean);
-    const purpose=lines.find(x=>x.startsWith("العملية: "))?.slice(9)||"";
-    const address=lines.find(x=>x.startsWith("العنوان: "))?.slice(9)||"";
-    const rooms=lines.find(x=>x.startsWith("الغرف: "))?.slice(7)||"";
-    const bathrooms=lines.find(x=>x.startsWith("الحمامات: "))?.slice(10)||"";
-    const floor=lines.find(x=>x.startsWith("الطابق: "))?.slice(8)||"";
-    const furnished=lines.find(x=>x.startsWith("التجهيز: "))?.slice(9)||"";
-    const features=lines.find(x=>x.startsWith("المميزات: "))?.slice(10)||"";
-    const owner=lines.find(x=>x.startsWith("صاحب الإعلان: "))?.slice(14)||"";
-    const video=property.video_url || lines.find(x=>x.startsWith("فيديو: "))?.slice(7)||"";
-    const longDesc=lines.find(x=>x.startsWith("الوصف: "))?.slice(7)||"";
-
-    const detailRows=[
-      purpose&&"🔖 العملية: "+purpose,
-      "🏷️ النوع: "+(property.type||""),
-      "📍 المنطقة: "+(property.area||""),
-      address&&"🧭 العنوان: "+address,
-      "💰 السعر: "+(property.price||""),
-      property.size&&"📐 المساحة: "+property.size,
-      rooms&&"🛏️ الغرف: "+rooms,
-      bathrooms&&"🚿 الحمامات: "+bathrooms,
-      floor&&"🏢 الطابق: "+floor,
-      furnished&&"🛋️ التجهيز: "+furnished,
-      features&&"⭐ المميزات: "+features,
-      owner&&"👤 صاحب الإعلان: "+owner
-    ].filter(Boolean).map(x=>"<p>"+x+"</p>").join("");
-
-    card.innerHTML=imageHTML+
-      '<div class="card-content">'+
-      '<h3>'+String(property.title||"عقار").replace(/</g,"&lt;")+'</h3>'+
-      detailRows+
-      (longDesc?'<p style="white-space:pre-line">📝 '+longDesc.replace(/</g,"&lt;")+'</p>':"")+
-      '<div class="actions">'+
-      '<a class="contact" href="tel:'+cleanPhone+'">📞 اتصال</a>'+
-      '<a class="contact" href="https://wa.me/'+whatsappNumber+'?text='+encodeURIComponent("مرحباً، عم أتواصل معك من منصة عقارات حلب الظاظا بخصوص هذا العرض.\n\nالعقار: "+property.title+"\nالمنطقة: "+property.area+"\nالسعر: "+property.price+"\n\nرابط العرض:\n"+window.location.origin+window.location.pathname+"?property="+encodeURIComponent(String(property.id)))+'" target="_blank" rel="noopener noreferrer">📱 واتساب</a>'+
-      (areaCoords[property.area]?'<a class="map-btn" href="https://www.google.com/maps/search/?api=1&query='+areaCoords[property.area][0]+','+areaCoords[property.area][1]+'" target="_blank">📍 فتح الخريطة</a>':"")+
-      (video?((video.startsWith("data:video/")?'<video class="card-image" controls preload="metadata" src="'+video+'"></video>':'<a class="map-btn" href="'+video.replace(/"/g,"&quot;")+'" target="_blank" rel="noopener noreferrer">🎥 فيديو العقار</a>')):"")+
-      (isAdmin?'<button type="button" class="edit-btn" data-action="edit" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">✏️ تعديل</button>'+
-      '<button type="button" class="delete-btn" data-action="delete" data-id="'+String(property.id).replace(/"/g,"&quot;")+'">🗑️ حذف</button>':"")+
-      '</div></div>';
-    container.appendChild(card);
-  });
+function openRequest(r){
+ r=r||{};const edit=!!r.id;
+ openModal(edit?"تعديل طلب الزبون":"تسجيل طلب زبون جديد",'<form id="requestForm" class="grid-form">'+selectField("rPurpose","العملية",["شراء","إيجار"],r.purpose||"شراء")+selectField("rType","نوع العقار",["شقة","منزل","فيلا","أرض","محل","مكتب","مستودع","بناء","مزرعة"],r.property_type||"شقة")+field("rArea","المنطقة المطلوبة *",r.area,"مثال: الفيض وحولها")+field("rBudget","الميزانية *",r.budget,"مثال: 50000–70000 دولار")+field("rContact","رقم الزبون *",r.contact,"رقم الهاتف أو واتساب")+textArea("rDetails","التفاصيل",r.details,"عدد الغرف، الطابق، شروط الزبون…")+modalButtons()+'</form>');
+ $("cancelModal").onclick=closeModal;
+ $("requestForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const row={purpose:$("rPurpose").value,property_type:$("rType").value,area:$("rArea").value.trim(),budget:$("rBudget").value.trim(),contact:$("rContact").value.trim(),details:$("rDetails").value.trim()};if(!row.area||!row.budget||row.contact.length<5){setBusy(btn,false);toast("عبّي المنطقة والميزانية ورقم تواصل صحيح.","error");return;}const result=edit?await db.from("customer_requests").update(row).eq("id",r.id):await db.from("customer_requests").insert(row);setBusy(btn,false);if(result.error){toast("ما قدرنا نحفظ الطلب: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تعديل الطلب.":"تم تسجيل طلب الزبون.");await refreshAll();};
 }
-
-
-document.addEventListener("click",function(ev){
-  const btn=ev.target.closest("[data-action]");
-  if(!btn)return;
-  const id=btn.getAttribute("data-id");
-  if(btn.getAttribute("data-action")==="edit") window.editProperty(id);
-  else if(btn.getAttribute("data-action")==="delete") window.deleteProperty(id);
-});
-
-/* البحث */
-
-window.openImageModal = function(src){const modal=document.getElementById("imageModal");const img=document.getElementById("modalImage");if(!src)return;modal.hidden=false;img.src=src;modal.style.display="flex";}
-window.closeImageModal = function(){document.getElementById("imageModal").style.display="none";document.getElementById("modalImage").src="";}
-window.searchProperties = function() {
-
-  const text =
-    document
-      .getElementById("searchInput")
-      .value
-      .toLowerCase();
-
-
-  const type =
-    document
-      .getElementById("searchType")
-      .value;
-
-
-  const filtered =
-    properties.filter(function(property) {
-
-      const matchesText =
-
-        String(property.title || "")
-          .toLowerCase()
-          .includes(text)
-
-        ||
-
-        String(property.area || "")
-          .toLowerCase()
-          .includes(text)
-        ||
-        String(property.description || "")
-          .toLowerCase()
-          .includes(text);
-
-
-      const matchesType =
-        !type ||
-        property.type === type;
-
-
-      return matchesText && matchesType;
-
-    });
-
-
-  displayProperties(filtered);
-
+function openOffice(o){
+ o=o||{};const edit=!!o.id;
+ openModal(edit?"تعديل بيانات المكتب":"إضافة مكتب متعاون",'<form id="officeForm" class="grid-form">'+field("oName","اسم المكتب *",o.office_name,"اسم المكتب العقاري")+field("oContact","اسم المسؤول",o.contact_name,"اسم الشخص المسؤول")+field("oPhone","رقم التواصل",o.phone,"هاتف أو واتساب")+field("oAreas","المناطق التي يعمل فيها",o.areas,"مثال: سيف الدولة، الإذاعة")+selectField("oStatus","الحالة",["نشط","متوقف"],o.status||"نشط")+textArea("oNotes","ملاحظات",o.notes,"طريقة التعاون أو ملاحظات خاصة")+modalButtons()+'</form>');
+ $("cancelModal").onclick=closeModal;
+ $("officeForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const row={office_name:$("oName").value.trim(),contact_name:$("oContact").value.trim(),phone:$("oPhone").value.trim(),areas:$("oAreas").value.trim(),status:$("oStatus").value,notes:$("oNotes").value.trim()};if(row.office_name.length<2){setBusy(btn,false);toast("اكتب اسم المكتب.","error");return;}const result=edit?await db.from("partner_offices").update(row).eq("id",o.id):await db.from("partner_offices").insert(row);setBusy(btn,false);if(result.error){toast("تعذر حفظ المكتب: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تحديث المكتب.":"تمت إضافة المكتب المتعاون.");await refreshAll();};
 }
-
-
-/* تشغيل الموقع بعد التحقق من جلسة الإدارة */
-async function initializeApp(){
-  await syncAdminSession();
-  await loadProperties();
+function openCase(c){
+ c=c||{};const edit=!!c.id;
+ const officeOpts=['<option value="">بدون ربط بمكتب حالياً</option>'].concat(offices.map(o=>'<option value="'+o.id+'" '+(String(c.office_id||"")===String(o.id)?"selected":"")+'>'+esc(o.office_name)+'</option>')).join("");
+ openModal(edit?"تعديل فرصة التعاون":"تسجيل فرصة تعاون",'<form id="caseForm" class="grid-form">'+field("cTitle","عنوان الفرصة *",c.title,"مثال: زبون يبحث عن شقة بثلاث غرف")+selectField("cPurpose","العملية",["بيع","إيجار","شراء","استئجار"],c.purpose||"شراء")+'<div class="field"><label for="cOffice">المكتب المتعاون</label><select id="cOffice">'+officeOpts+'</select></div>'+field("cArea","المنطقة",c.area,"الحي المطلوب أو موقع العقار")+field("cBudget","الميزانية / السعر",c.budget,"المبلغ التقريبي")+field("cContact","رقم تواصل",c.contact,"رقم الزبون أو المكتب")+field("cCommission","العمولة أو الاتفاق",c.commission,"مثال: حسب الاتفاق")+selectField("cStatus","حالة التعاون",["جديد","تم التواصل مع المكتب","بانتظار الرد","تم الاتفاق","مغلق"],c.status||"جديد")+field("cFollow","موعد المتابعة",c.follow_up_at,"","date")+textArea("cNotes","تفاصيل وملاحظات",c.notes,"تفاصيل العقار أو الطلب وما تم الاتفاق عليه")+modalButtons()+'</form>');
+ $("cancelModal").onclick=closeModal;
+ $("caseForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const officeVal=$("cOffice").value;const row={title:$("cTitle").value.trim(),purpose:$("cPurpose").value,office_id:officeVal?Number(officeVal):null,area:$("cArea").value.trim(),budget:$("cBudget").value.trim(),contact:$("cContact").value.trim(),commission:$("cCommission").value.trim(),status:$("cStatus").value,follow_up_at:$("cFollow").value||null,notes:$("cNotes").value.trim()};if(row.title.length<2){setBusy(btn,false);toast("اكتب عنوان فرصة التعاون.","error");return;}const result=edit?await db.from("collaboration_cases").update(row).eq("id",c.id):await db.from("collaboration_cases").insert(row);setBusy(btn,false);if(result.error){toast("تعذر حفظ فرصة التعاون: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تحديث فرصة التعاون.":"تم تسجيل فرصة التعاون.");await refreshAll();};
 }
-initializeApp();
-supabaseClient.auth.onAuthStateChange((_event,session)=>{
-  isAdmin=String(session?.user?.email||"").toLowerCase()===ADMIN_EMAIL;
-  updateAdminUI();
-  if(!session)loadProperties();
-});
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js?v=20").then(reg=>reg.update()).catch(console.error);
-  });
-}
-
-  </script>
-
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!window.__swReloaded){window.__swReloaded=true;location.reload();}});}</script>
-
-
-<script>
-document.getElementById("requestForm")?.addEventListener("submit", async function(e){
-  e.preventDefault();
-  const form=this;
-  const purpose=document.getElementById("requestPurpose").value;
-  const propertyType=document.getElementById("requestType").value;
-  const area=document.getElementById("requestArea").value.trim();
-  const budget=document.getElementById("requestBudget").value.trim();
-  const details=document.getElementById("requestDetails").value.trim();
-  const contact=document.getElementById("requestContact").value.trim();
-  const fields = [["العملية",purpose],["نوع العقار",propertyType],["المنطقة",area],["الميزانية",budget],["التفاصيل",details],["رقم الزبون",contact]];
-  const message = "🏢 شبكة عقارات الظاظا\n🔔 إشعار: وصلك طلب عقار جديد!\n━━━━━━━━━━━━━━\n\n" +
-    fields.map(([k,v]) => "• " + k + ": " + (v || "لم يحدد")).join("\n") +
-    "\n\n━━━━━━━━━━━━━━\n📩 المصدر: منصة شبكة عقارات الظاظا";
-  const submit=form.querySelector('button[type="submit"]');
-  if(submit){submit.disabled=true;submit.textContent="عم نحفظ طلبك…";}
-  let saved=false;
-  try{
-    const {error}=await supabaseClient.from("customer_requests").insert({
-      purpose,property_type:propertyType,area,budget,details,contact
-    });
-    if(error)throw error;
-    saved=true;
-  }catch(err){console.error("Customer request save failed:",err);}
-  // حتى إذا تعذر الحفظ، يظل إرسال الطلب عبر واتساب متاحاً.
-  if(submit){submit.disabled=false;submit.textContent="إرسال طلب العقار";}
-  if(!saved)alert("ما قدرنا نحفظ الطلب داخل المنصة، رح نفتح واتساب لتوصله للمكتب مباشرة.");
-  const officeWhatsApp = "963957839713";
-  window.location.href = "https://wa.me/" + officeWhatsApp + "?text=" + encodeURIComponent(message);
-});
+$("newPropertyBtn").onclick=()=>openProperty();$("newRequestBtn").onclick=()=>openRequest();$("newOfficeBtn").onclick=()=>openOffice();$("newCaseBtn").onclick=()=>openCase();
+["propertySearch","propertyFilter"].forEach(id=>$(id).addEventListener("input",renderProperties));
+["requestSearch","requestFilter"].forEach(id=>$(id).addEventListener("input",renderRequests));
+["officeSearch","officeFilter"].forEach(id=>$(id).addEventListener("input",renderOffices));
+["caseSearch","caseFilter"].forEach(id=>$(id).addEventListener("input",renderCases));
+verifySession();
+if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js?v=21").then(reg=>reg.update()).catch(()=>{});}
 </script>
-<script>
-(function(){
- const request=document.querySelector(".request-section");
- const adminRequestsPanel=document.getElementById("adminRequestsPanel");
- const addSection=document.querySelector(".add-section");
- const formBox=document.getElementById("formBox");
- const mapHeading=[...document.querySelectorAll("h2")].find(el=>el.textContent.includes("خريطة حلب العقارية"));
- const map=document.getElementById("map");
- const search=document.querySelector(".search");
- const imageModal=document.getElementById("imageModal");
- const container=document.querySelector(".container");
- function hideAll(){[request,adminRequestsPanel,addSection,formBox,mapHeading,map,search,imageModal,container].forEach(el=>{if(el)el.hidden=true;});}
- window.showAppView=function(name){
-  hideAll();
-  document.getElementById("homeMenu").hidden=true;
-  document.getElementById("viewNav").hidden=false;
-  if(name==="requests"&&!isAdmin){alert("هذا القسم مخصص للإدارة فقط.");goHome();return;}
-  const titles={request:"طلب عقار",browse:"تصفّح العقارات",add:"إضافة إعلان عقاري",requests:"طلبات الزبائن"};
-  document.getElementById("viewTitle").textContent=titles[name]||"القسم";
-  if(name==="request"&&request)request.hidden=false;
-  if(name==="requests"&&adminRequestsPanel){adminRequestsPanel.hidden=false;loadCustomerRequests();}
-  if(name==="add"){if(addSection)addSection.hidden=false;if(formBox){formBox.hidden=false;formBox.style.display="block";}}
-  if(name==="browse"){[mapHeading,map,search,container].forEach(el=>{if(el)el.hidden=false;});if(window.map)setTimeout(()=>window.map.invalidateSize(),150);}
-  window.scrollTo({top:0,behavior:"smooth"});
- };
- window.goHome=function(){
-  hideAll();document.getElementById("viewNav").hidden=true;document.getElementById("homeMenu").hidden=false;
-  if(formBox)formBox.style.display="none";
-  window.scrollTo({top:0,behavior:"smooth"});
- };
- hideAll();
-})();
-</script>
-
-<script>
-/* تسجيل إحصائيات عامة دون جمع بيانات تعريفية */
-(function(){
- const record=(type,id)=>supabaseClient.from('site_analytics_events').insert({
-  event_type:type,page_path:location.pathname+location.hash,
-  property_id:id?String(id).slice(0,100):null
- }).then(({error})=>{if(error)console.warn('تعذر تسجيل الإحصائية',error.message);});
- record('page_view');
- document.addEventListener('click',function(e){
-  const card=e.target.closest('.card');
-  if(card)record('property_view',card.dataset.id||card.getAttribute('data-id'));
-  if(e.target.closest('a[href^="https://wa.me/"],a[href^="tel:"]'))record('contact_click');
-  if(e.target.closest('[onclick*="searchProperties"],#searchButton'))record('search');
- },true);
-})();
-</script>
-<style>
-#statsAdmin{max-width:900px;margin:20px auto;padding:18px;background:#fff;border-radius:16px;box-shadow:0 3px 15px #ccd2df;color:#17213a}
-#statsAdmin h2{color:#a57a22;margin-bottom:10px}#statsAdmin input,#statsAdmin button{font-size:16px;padding:12px;border-radius:9px;margin:5px;border:1px solid #ccd2df}
-#statsAdmin button{background:#101b35;color:#e2bd63;font-weight:bold}#statsCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
-.stats-card{background:#f4f6fb;border-radius:12px;padding:16px;text-align:center}.stats-card strong{display:block;font-size:26px;color:#101b35;margin-top:7px}
-#statsMsg{line-height:1.8;margin-top:10px}
-</style>
-<section id="statsAdmin" hidden>
-<h2>📊 لوحة إحصائيات شبكة عقارات الظاظا</h2>
-<p>سجّل دخولك بحساب Supabase المصرّح له. اللوحة لا تعرض البيانات للزوار غير المسجلين.</p>
-<div id="statsLogin">
-<input id="statsEmail" type="email" autocomplete="username" placeholder="البريد الإلكتروني">
-<input id="statsPassword" type="password" autocomplete="current-password" placeholder="كلمة المرور">
-<button id="statsSignIn">تسجيل الدخول</button>
-<button id="statsSignOut" hidden>تسجيل الخروج</button>
-</div>
-<p id="statsMsg" role="status"></p>
-<div id="statsResults" hidden>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button data-range="today">اليوم</button><button data-range="week">آخر 7 أيام</button><button data-range="month">آخر 30 يوماً</button>
-</div>
-<div id="statsCards">
-<div class="stats-card">زيارات الصفحات<strong id="statPages">—</strong></div>
-<div class="stats-card">مشاهدات العقارات<strong id="statProperties">—</strong></div>
-<div class="stats-card">نقرات التواصل<strong id="statContacts">—</strong></div>
-<div class="stats-card">عمليات البحث<strong id="statSearches">—</strong></div>
-</div>
-<p style="margin-top:12px">هذه أعداد أحداث مسجّلة وليست عدد أشخاص فريدين.</p>
-</div></section>
-<script>
-(function(){
-const root=document.getElementById('statsAdmin');
-const params=new URLSearchParams(location.search);
-if(params.get('admin')!=='1') return;
-root.hidden=false;
-document.getElementById('homeMenu').hidden=true;
-document.querySelectorAll('header,.hero,.request-section,.add-section,.form-box,.search,.container,#map,#viewNav').forEach(el=>{if(el)el.hidden=true;});
-const msg=document.getElementById('statsMsg');
-const login=document.getElementById('statsLogin');
-const results=document.getElementById('statsResults');
-let range='today';
-function say(t){msg.textContent=t;}
-async function refresh(){
- const {data:auth}=await supabaseClient.auth.getUser();
- if(!auth.user){results.hidden=true;login.hidden=false;document.getElementById('statsSignIn').hidden=false;document.getElementById('statsSignOut').hidden=true;say('سجّل الدخول ببريد الإدارة المصرّح به.');return;}
- if(String(auth.user.email||'').toLowerCase()!==ADMIN_EMAIL){await supabaseClient.auth.signOut();results.hidden=true;say('هذا الحساب غير مخوّل لإدارة شبكة عقارات الظاظا.');return;}
- login.hidden=false;document.getElementById('statsSignIn').hidden=true;document.getElementById('statsSignOut').hidden=false;
- const now=new Date();let from=new Date(now);
- if(range==='today')from.setHours(0,0,0,0);
- if(range==='week')from.setDate(from.getDate()-7);
- if(range==='month')from.setDate(from.getDate()-30);
- const {data,error}=await supabaseClient.from('site_analytics_events').select('event_type,created_at').gte('created_at',from.toISOString()).lte('created_at',now.toISOString());
- if(error){results.hidden=true;say('تعذّر تحميل الإحصائيات. تأكد من صلاحيات حساب الإدارة.');return;}
- const count=t=>data.filter(e=>e.event_type===t).length;
- document.getElementById('statPages').textContent=count('page_view');
- document.getElementById('statProperties').textContent=count('property_view');
- document.getElementById('statContacts').textContent=count('contact_click');
- document.getElementById('statSearches').textContent=count('search');
- results.hidden=false;say('تم تحميل الإحصائيات المسجّلة للفترة المحددة.');
-}
-document.getElementById('statsSignIn').addEventListener('click',async()=>{
- const email=document.getElementById('statsEmail').value.trim(),password=document.getElementById('statsPassword').value;
- if(!email||!password){say('أدخل البريد الإلكتروني وكلمة المرور.');return;}
- if(email.toLowerCase()!==ADMIN_EMAIL){say('استخدم البريد المخصص للإدارة فقط.');return;}
- const {error}=await supabaseClient.auth.signInWithPassword({email,password});
- if(error){say('تعذّر تسجيل الدخول. تأكد من بيانات الحساب.');return;}
- await refresh();
-});
-document.getElementById('statsSignOut').addEventListener('click',async()=>{await supabaseClient.auth.signOut();results.hidden=true;document.getElementById('statsSignIn').hidden=false;document.getElementById('statsSignOut').hidden=true;say('تم تسجيل الخروج.');});
-root.querySelectorAll('[data-range]').forEach(b=>b.addEventListener('click',async()=>{range=b.dataset.range;await refresh();}));
-supabaseClient.auth.onAuthStateChange(()=>{setTimeout(refresh,0);});
-refresh();
-})();
-</script>
-
-
-
-<script>
-/* إدارة طلبات الزبائن — متاحة لحساب الإدارة فقط */
-window.loadCustomerRequests = async function(){
-  const root=document.getElementById("customerRequestsList");
-  if(!root)return;
-  if(!isAdmin){root.textContent="هذا القسم مخصص للإدارة فقط.";return;}
-  root.textContent="جاري تحميل الطلبات…";
-  const {data,error}=await supabaseClient.from("customer_requests").select("*").order("created_at",{ascending:false}).limit(100);
-  if(error){console.error(error);root.textContent="تعذر تحميل الطلبات. تأكد من تسجيل الدخول بحساب الإدارة.";return;}
-  if(!data||!data.length){root.innerHTML='<div style="padding:24px;text-align:center;background:#f6f8fb;border-radius:12px;color:#667085">ما في طلبات زبائن لحد الآن. أي طلب جديد رح يظهر هون.</div>';return;}
-  const esc=(v)=>String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-  const statuses=["جديد","تم التواصل","مكتمل","ملغي"];
-  root.innerHTML=data.map(r=>{
-    const date=new Date(r.created_at).toLocaleString("ar-SY");
-    const options=statuses.map(s=>'<option value="'+s+'" '+(r.status===s?'selected':'')+'>'+s+'</option>').join("");
-    return '<article style="border:1px solid #e3e8f0;border-radius:14px;padding:15px;margin:12px 0;background:#fbfcfe">'
-      +'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><strong style="color:#a47a22">طلب رقم #'+r.id+' — '+esc(r.purpose)+' '+esc(r.property_type)+'</strong><small style="color:#667085">'+esc(date)+'</small></div>'
-      +'<p style="margin-top:8px">📍 <b>المنطقة:</b> '+esc(r.area)+'　|　💰 <b>الميزانية:</b> '+esc(r.budget)+'</p>'
-      +'<p style="margin-top:6px">📞 <b>التواصل:</b> <a href="tel:'+esc(r.contact)+'">'+esc(r.contact)+'</a></p>'
-      +'<p style="margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere">📝 <b>التفاصيل:</b> '+esc(r.details||"لم يحدد")+'</p>'
-      +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px"><label>حالة الطلب:</label><select aria-label="حالة الطلب" onchange="updateCustomerRequestStatus('+Number(r.id)+',this.value)" style="padding:9px;border:1px solid #d6dce7;border-radius:9px;background:#fff">'+options+'</select>'
-      +'<button type="button" onclick="deleteCustomerRequest('+Number(r.id)+')" style="padding:9px 12px;border:0;border-radius:9px;background:#fff0f0;color:#a32632;font-weight:bold">حذف الطلب</button></div></article>';
-  }).join("");
-};
-window.updateCustomerRequestStatus=async function(id,status){
-  if(!isAdmin)return alert("هذا الإجراء مخصص للإدارة فقط.");
-  const allowed=["جديد","تم التواصل","مكتمل","ملغي"];
-  if(!allowed.includes(status))return;
-  const {error}=await supabaseClient.from("customer_requests").update({status}).eq("id",id);
-  if(error){alert("ما قدرنا نحدّث حالة الطلب.");console.error(error);return;}
-  loadCustomerRequests();
-};
-window.deleteCustomerRequest=async function(id){
-  if(!isAdmin)return alert("هذا الإجراء مخصص للإدارة فقط.");
-  if(!confirm("متأكد بدك تحذف طلب الزبون؟"))return;
-  const {error}=await supabaseClient.from("customer_requests").delete().eq("id",id);
-  if(error){alert("ما قدرنا نحذف الطلب.");console.error(error);return;}
-  loadCustomerRequests();
-};
-</script>
-
 </body>
 </html>
