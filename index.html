@@ -320,12 +320,19 @@ footer h3{font-size:24px;color:var(--gold2);margin-bottom:6px}
   <button type="button" class="menu-card" onclick="showAppView('request')"><span>🔎</span><strong>طلب عقار</strong><small>اطلب بيت أو عقار بالمواصفات اللي بدك ياها</small></button>
   <button type="button" class="menu-card" onclick="showAppView('browse')"><span>🏘️</span><strong>تصفّح العقارات</strong><small>شوف الإعلانات والأسعار والمناطق</small></button>
   <button type="button" class="menu-card" id="adminAddMenu" onclick="showAppView('add')" hidden><span>➕</span><strong>إدارة العقارات</strong><small>إضافة إعلان وتعديل العقارات وحذفها — للإدارة فقط</small></button>
+  <button type="button" class="menu-card" id="adminRequestsMenu" onclick="showAppView('requests')" hidden><span>📥</span><strong>طلبات الزبائن</strong><small>عرض طلبات الشراء والإيجار وتحديث حالتها — للإدارة فقط</small></button>
 </nav>
 <div id="viewNav" class="view-nav" hidden><button type="button" onclick="goHome()">← رجوع للأقسام الرئيسية</button><span id="viewTitle">القسم</span></div>
 <div id="adminBar" hidden style="max-width:1100px;margin:12px auto;padding:12px 16px;background:#e9f4ed;border:1px solid #b9ddc6;border-radius:12px;color:#175b35;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
 <span>🔐 وضع الإدارة مفعّل</span><span id="adminEmailLabel">tareqfzaz@gmail.com</span>
 <div style="display:flex;gap:8px;flex-wrap:wrap"><a href="?admin=1" style="padding:8px 12px;border-radius:8px;background:#101b35;color:#e2bd63;text-decoration:none;font-weight:bold">📊 الإحصائيات</a><button type="button" id="adminSignOut" style="padding:8px 12px;border:0;border-radius:8px;background:#f5dddd;color:#8d1c1c;font-weight:bold">تسجيل الخروج</button></div>
 </div>
+
+<section id="adminRequestsPanel" hidden style="max-width:1000px;margin:20px auto;padding:18px;background:#fff;border:1px solid #e4e9f2;border-radius:18px;box-shadow:0 8px 28px #15294a0b">
+  <h2 style="color:#101b35;margin-bottom:8px">📥 طلبات الزبائن</h2>
+  <p style="color:#667085;margin-bottom:14px">الطلبات محفوظة بشكل خاص، ولا يمكن للزوار أو المكاتب الأخرى الاطلاع عليها.</p>
+  <div id="customerRequestsList"><p>جاري تحميل الطلبات…</p></div>
+</section>
 
 <section id="propertyRequests" class="request-section">
   <h2>ما لقيت العقار المناسب؟</h2>
@@ -493,14 +500,16 @@ let isAdmin = false;
 
 function updateAdminUI(){
   const adminMenu=document.getElementById("adminAddMenu");
+  const requestsMenu=document.getElementById("adminRequestsMenu");
   const adminBar=document.getElementById("adminBar");
   const addSection=document.querySelector(".add-section");
   const formBox=document.getElementById("formBox");
   if(adminMenu)adminMenu.hidden=!isAdmin;
+  if(requestsMenu)requestsMenu.hidden=!isAdmin;
   if(adminBar)adminBar.hidden=!isAdmin;
   if(addSection)addSection.hidden=!isAdmin;
   if(formBox&&!isAdmin){formBox.hidden=true;formBox.style.display="none";}
-  if(!isAdmin && document.getElementById("viewTitle")?.textContent==="إضافة إعلان عقاري")goHome();
+  if(!isAdmin && ["إضافة إعلان عقاري","طلبات الزبائن"].includes(document.getElementById("viewTitle")?.textContent))goHome();
 }
 
 async function syncAdminSession(){
@@ -954,20 +963,32 @@ if ("serviceWorker" in navigator) {
 
 
 <script>
-document.getElementById("requestForm")?.addEventListener("submit", function(e){
+document.getElementById("requestForm")?.addEventListener("submit", async function(e){
   e.preventDefault();
-  const fields = [
-    ["العملية", document.getElementById("requestPurpose").value],
-    ["نوع العقار", document.getElementById("requestType").value],
-    ["المنطقة", document.getElementById("requestArea").value.trim()],
-    ["الميزانية", document.getElementById("requestBudget").value.trim()],
-    ["التفاصيل", document.getElementById("requestDetails").value.trim()],
-    ["رقم الزبون", document.getElementById("requestContact").value.trim()]
-  ];
+  const form=this;
+  const purpose=document.getElementById("requestPurpose").value;
+  const propertyType=document.getElementById("requestType").value;
+  const area=document.getElementById("requestArea").value.trim();
+  const budget=document.getElementById("requestBudget").value.trim();
+  const details=document.getElementById("requestDetails").value.trim();
+  const contact=document.getElementById("requestContact").value.trim();
+  const fields = [["العملية",purpose],["نوع العقار",propertyType],["المنطقة",area],["الميزانية",budget],["التفاصيل",details],["رقم الزبون",contact]];
   const message = "🏢 شبكة عقارات الظاظا\n🔔 إشعار: وصلك طلب عقار جديد!\n━━━━━━━━━━━━━━\n\n" +
     fields.map(([k,v]) => "• " + k + ": " + (v || "لم يحدد")).join("\n") +
     "\n\n━━━━━━━━━━━━━━\n📩 المصدر: منصة شبكة عقارات الظاظا";
-  // رقم واتساب بزنس الظاظا: 0957839713 بصيغة دولية من دون الصفر الأول
+  const submit=form.querySelector('button[type="submit"]');
+  if(submit){submit.disabled=true;submit.textContent="عم نحفظ طلبك…";}
+  let saved=false;
+  try{
+    const {error}=await supabaseClient.from("customer_requests").insert({
+      purpose,property_type:propertyType,area,budget,details,contact
+    });
+    if(error)throw error;
+    saved=true;
+  }catch(err){console.error("Customer request save failed:",err);}
+  // حتى إذا تعذر الحفظ، يظل إرسال الطلب عبر واتساب متاحاً.
+  if(submit){submit.disabled=false;submit.textContent="إرسال طلب العقار";}
+  if(!saved)alert("ما قدرنا نحفظ الطلب داخل المنصة، رح نفتح واتساب لتوصله للمكتب مباشرة.");
   const officeWhatsApp = "963957839713";
   window.location.href = "https://wa.me/" + officeWhatsApp + "?text=" + encodeURIComponent(message);
 });
@@ -975,6 +996,7 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
 <script>
 (function(){
  const request=document.querySelector(".request-section");
+ const adminRequestsPanel=document.getElementById("adminRequestsPanel");
  const addSection=document.querySelector(".add-section");
  const formBox=document.getElementById("formBox");
  const mapHeading=[...document.querySelectorAll("h2")].find(el=>el.textContent.includes("خريطة حلب العقارية"));
@@ -982,14 +1004,16 @@ document.getElementById("requestForm")?.addEventListener("submit", function(e){
  const search=document.querySelector(".search");
  const imageModal=document.getElementById("imageModal");
  const container=document.querySelector(".container");
- function hideAll(){[request,addSection,formBox,mapHeading,map,search,imageModal,container].forEach(el=>{if(el)el.hidden=true;});}
+ function hideAll(){[request,adminRequestsPanel,addSection,formBox,mapHeading,map,search,imageModal,container].forEach(el=>{if(el)el.hidden=true;});}
  window.showAppView=function(name){
   hideAll();
   document.getElementById("homeMenu").hidden=true;
   document.getElementById("viewNav").hidden=false;
-  const titles={request:"طلب عقار",browse:"تصفّح العقارات",add:"إضافة إعلان عقاري"};
+  if(name==="requests"&&!isAdmin){alert("هذا القسم مخصص للإدارة فقط.");goHome();return;}
+  const titles={request:"طلب عقار",browse:"تصفّح العقارات",add:"إضافة إعلان عقاري",requests:"طلبات الزبائن"};
   document.getElementById("viewTitle").textContent=titles[name]||"القسم";
   if(name==="request"&&request)request.hidden=false;
+  if(name==="requests"&&adminRequestsPanel){adminRequestsPanel.hidden=false;loadCustomerRequests();}
   if(name==="add"){if(addSection)addSection.hidden=false;if(formBox){formBox.hidden=false;formBox.style.display="block";}}
   if(name==="browse"){[mapHeading,map,search,container].forEach(el=>{if(el)el.hidden=false;});if(window.map)setTimeout(()=>window.map.invalidateSize(),150);}
   window.scrollTo({top:0,behavior:"smooth"});
@@ -1094,6 +1118,48 @@ refresh();
 })();
 </script>
 
+
+
+<script>
+/* إدارة طلبات الزبائن — متاحة لحساب الإدارة فقط */
+window.loadCustomerRequests = async function(){
+  const root=document.getElementById("customerRequestsList");
+  if(!root)return;
+  if(!isAdmin){root.textContent="هذا القسم مخصص للإدارة فقط.";return;}
+  root.textContent="جاري تحميل الطلبات…";
+  const {data,error}=await supabaseClient.from("customer_requests").select("*").order("created_at",{ascending:false}).limit(100);
+  if(error){console.error(error);root.textContent="تعذر تحميل الطلبات. تأكد من تسجيل الدخول بحساب الإدارة.";return;}
+  if(!data||!data.length){root.innerHTML='<div style="padding:24px;text-align:center;background:#f6f8fb;border-radius:12px;color:#667085">ما في طلبات زبائن لحد الآن. أي طلب جديد رح يظهر هون.</div>';return;}
+  const esc=(v)=>String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+  const statuses=["جديد","تم التواصل","مكتمل","ملغي"];
+  root.innerHTML=data.map(r=>{
+    const date=new Date(r.created_at).toLocaleString("ar-SY");
+    const options=statuses.map(s=>'<option value="'+s+'" '+(r.status===s?'selected':'')+'>'+s+'</option>').join("");
+    return '<article style="border:1px solid #e3e8f0;border-radius:14px;padding:15px;margin:12px 0;background:#fbfcfe">'
+      +'<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><strong style="color:#a47a22">طلب رقم #'+r.id+' — '+esc(r.purpose)+' '+esc(r.property_type)+'</strong><small style="color:#667085">'+esc(date)+'</small></div>'
+      +'<p style="margin-top:8px">📍 <b>المنطقة:</b> '+esc(r.area)+'　|　💰 <b>الميزانية:</b> '+esc(r.budget)+'</p>'
+      +'<p style="margin-top:6px">📞 <b>التواصل:</b> <a href="tel:'+esc(r.contact)+'">'+esc(r.contact)+'</a></p>'
+      +'<p style="margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere">📝 <b>التفاصيل:</b> '+esc(r.details||"لم يحدد")+'</p>'
+      +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px"><label>حالة الطلب:</label><select aria-label="حالة الطلب" onchange="updateCustomerRequestStatus('+Number(r.id)+',this.value)" style="padding:9px;border:1px solid #d6dce7;border-radius:9px;background:#fff">'+options+'</select>'
+      +'<button type="button" onclick="deleteCustomerRequest('+Number(r.id)+')" style="padding:9px 12px;border:0;border-radius:9px;background:#fff0f0;color:#a32632;font-weight:bold">حذف الطلب</button></div></article>';
+  }).join("");
+};
+window.updateCustomerRequestStatus=async function(id,status){
+  if(!isAdmin)return alert("هذا الإجراء مخصص للإدارة فقط.");
+  const allowed=["جديد","تم التواصل","مكتمل","ملغي"];
+  if(!allowed.includes(status))return;
+  const {error}=await supabaseClient.from("customer_requests").update({status}).eq("id",id);
+  if(error){alert("ما قدرنا نحدّث حالة الطلب.");console.error(error);return;}
+  loadCustomerRequests();
+};
+window.deleteCustomerRequest=async function(id){
+  if(!isAdmin)return alert("هذا الإجراء مخصص للإدارة فقط.");
+  if(!confirm("متأكد بدك تحذف طلب الزبون؟"))return;
+  const {error}=await supabaseClient.from("customer_requests").delete().eq("id",id);
+  if(error){alert("ما قدرنا نحذف الطلب.");console.error(error);return;}
+  loadCustomerRequests();
+};
+</script>
 
 </body>
 </html>
