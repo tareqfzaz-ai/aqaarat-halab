@@ -34,7 +34,7 @@
    <div class="field span2"><label for="loginPassword">كلمة المرور</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="أدخل كلمة مرور الإدارة" required></div>
    <div class="span2"><button class="btn btn-gold wide" id="loginBtn" type="submit">دخول إلى لوحة الإدارة ←</button></div>
   </form>
-  <button id="forgotPasswordBtn" type="button" class="btn btn-light wide" style="margin-top:10px">نسيت كلمة المرور؟ إرسال رابط استعادة</button>
+  <button id="forgotPasswordBtn" type="button" onclick="window.recoverAdminPassword()" class="btn btn-light wide" style="margin-top:10px">نسيت كلمة المرور؟ إرسال رابط استعادة</button>
   <form id="resetPasswordForm" class="grid-form hidden" style="margin-top:14px">
    <div class="field span2"><label for="newPassword">كلمة المرور الجديدة</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="٨ أحرف على الأقل" required></div>
    <div class="field span2"><label for="confirmPassword">تأكيد كلمة المرور الجديدة</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="أعد كتابة كلمة المرور" required></div>
@@ -100,6 +100,29 @@
 <div id="toast" class="message hidden" style="position:fixed;bottom:15px;left:15px;right:15px;z-index:1200;max-width:500px;margin:auto;box-shadow:0 10px 35px #0002"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>if(!window.supabase)document.write('<script src="https://unpkg.com/@supabase/supabase-js@2"><\/script>');</script>
+<script>
+window.recoverAdminPassword = async function(){
+ const msg=document.getElementById("loginMessage"), btn=document.getElementById("forgotPasswordBtn"), emailInput=document.getElementById("loginEmail");
+ const show=(t,bad)=>{if(msg){msg.textContent=t;msg.className="message "+(bad?"error":"ok");msg.classList.remove("hidden");}};
+ const email=(emailInput&&emailInput.value||"").trim().toLowerCase();
+ if(email!=="tareqfzaz@gmail.com"){show("اكتب بريد الإدارة المعتمد: tareqfzaz@gmail.com",true);return;}
+ if(btn){btn.disabled=true;btn.textContent="جاري الاتصال بخدمة الاستعادة…";}
+ show("تم الضغط على الزر. عم نفحص الاتصال بخدمة الاستعادة…",false);
+ try{
+  if(!window.supabase||!window.supabase.createClient){
+   show("مكتبة الاتصال ما عم تتحمّل على جهازك. جرّب فتح الرابط بمتصفح Chrome مع تبديل الـVPN.",true);return;
+  }
+  const client=window.supabase.createClient("https://kypzypsonkzfrhpldtmp.supabase.co","sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-");
+  const result=await Promise.race([
+   client.auth.resetPasswordForEmail(email,{redirectTo:"https://tareqfzaz-ai.github.io/aqaarat-halab/"}),
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error("انتهت مهلة الاتصال بعد 15 ثانية")),15000))
+  ]);
+  if(result.error)throw result.error;
+  show("وصل طلب الاستعادة بنجاح. افحص البريد الوارد وSpam، وافتح أحدث رسالة.",false);
+ }catch(e){show("فشل الإرسال: "+(e&&e.message?e.message:"تعذّر الاتصال")+". جرّب تبديل الـVPN.",true);}
+ finally{if(btn){btn.disabled=false;btn.textContent="نسيت كلمة المرور؟ إرسال رابط استعادة";}}
+};
+</script>
 <script>
 const SUPABASE_URL="https://kypzypsonkzfrhpldtmp.supabase.co";
 const SUPABASE_KEY="sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-";
