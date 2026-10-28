@@ -34,6 +34,13 @@
    <div class="field span2"><label for="loginPassword">كلمة المرور</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="أدخل كلمة مرور الإدارة" required></div>
    <div class="span2"><button class="btn btn-gold wide" id="loginBtn" type="submit">دخول إلى لوحة الإدارة ←</button></div>
   </form>
+  <button id="forgotPasswordBtn" type="button" class="btn btn-light wide" style="margin-top:10px">نسيت كلمة المرور؟ إرسال رابط استعادة</button>
+  <form id="resetPasswordForm" class="grid-form hidden" style="margin-top:14px">
+   <div class="field span2"><label for="newPassword">كلمة المرور الجديدة</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="٨ أحرف على الأقل" required></div>
+   <div class="field span2"><label for="confirmPassword">تأكيد كلمة المرور الجديدة</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="أعد كتابة كلمة المرور" required></div>
+   <div class="span2"><button class="btn btn-gold wide" id="saveNewPasswordBtn" type="submit">حفظ كلمة المرور الجديدة</button></div>
+   <div class="span2"><button id="backToLoginBtn" type="button" class="btn btn-light wide">العودة لتسجيل الدخول</button></div>
+  </form>
   <div id="loginMessage" class="message hidden"></div>
   <p class="hint" style="margin-top:16px">تسجيل الدخول متاح لبريد الإدارة المعتمد فقط. لا توجد حسابات للمكاتب العقارية الأخرى.</p>
  </section>
@@ -112,6 +119,36 @@ async function verifySession(){
  else{if(user)await db.auth.signOut();currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}
 }
 function showApp(){$("loginScreen").classList.add("hidden");$("appScreen").classList.remove("hidden");$("adminLabel").textContent=currentUser.email;}
+function showRecoveryForm(){
+ $("loginForm").classList.add("hidden");$("forgotPasswordBtn").classList.add("hidden");$("resetPasswordForm").classList.remove("hidden");
+ $("loginPassword").value="";loginMessage("أنشئ كلمة مرور جديدة لحساب شبكة عقارات الظاظا.",false);
+}
+function showLoginForm(){
+ $("resetPasswordForm").classList.add("hidden");$("loginForm").classList.remove("hidden");$("forgotPasswordBtn").classList.remove("hidden");
+ $("newPassword").value="";$("confirmPassword").value="";
+}
+$("forgotPasswordBtn").addEventListener("click",async()=>{
+ const email=$("loginEmail").value.trim().toLowerCase();
+ if(email!==ADMIN_EMAIL){loginMessage("اكتب بريد الإدارة المعتمد أولاً.",true);return;}
+ const btn=$("forgotPasswordBtn");setBusy(btn,true,"جاري إرسال الرابط…");
+ const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:"https://tareqfzaz-ai.github.io/aqaarat-halab/"});
+ setBusy(btn,false);
+ if(error){loginMessage("تعذّر إرسال الرابط. حاول مرة أخرى بعد قليل.",true);console.error(error);return;}
+ loginMessage("تم طلب رابط استعادة جديد. افتح أحدث رسالة من Supabase، واضغط الرابط الموجود بداخلها.",false);
+});
+$("backToLoginBtn").addEventListener("click",showLoginForm);
+$("resetPasswordForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const password=$("newPassword").value,confirm=$("confirmPassword").value,btn=$("saveNewPasswordBtn");
+ if(password.length<8){loginMessage("كلمة المرور يجب أن تكون 8 أحرف على الأقل.",true);return;}
+ if(password!==confirm){loginMessage("كلمتا المرور غير متطابقتين.",true);return;}
+ setBusy(btn,true,"جاري حفظ كلمة المرور…");
+ const {error}=await db.auth.updateUser({password});
+ setBusy(btn,false);
+ if(error){loginMessage("لم يتم حفظ كلمة المرور. افتح أحدث رابط استعادة من البريد وحاول مجدداً.",true);console.error(error);return;}
+ await db.auth.signOut();currentUser=null;showLoginForm();
+ loginMessage("تم تغيير كلمة المرور بنجاح. سجّل الدخول الآن بكلمة المرور الجديدة.",false);
+});
 $("loginForm").addEventListener("submit",async e=>{
  e.preventDefault();const email=$("loginEmail").value.trim().toLowerCase(),password=$("loginPassword").value,btn=$("loginBtn");
  if(email!==ADMIN_EMAIL){loginMessage("هذا البريد غير مخوّل. استخدم بريد الإدارة المعتمد.",true);return;}
@@ -123,7 +160,11 @@ $("loginForm").addEventListener("submit",async e=>{
  currentUser=data.user;showApp();await refreshAll();toast("أهلاً بك، تم فتح لوحة الإدارة.");
 });
 $("logoutBtn").addEventListener("click",async()=>{await db.auth.signOut();currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");$("loginPassword").value="";});
-db.auth.onAuthStateChange((_event,session)=>{if(!session){currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}});
+db.auth.onAuthStateChange((event,session)=>{
+ if(event==="PASSWORD_RECOVERY"){showRecoveryForm();return;}
+ if(!session){currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}
+});
+if(new URLSearchParams(window.location.hash.slice(1)).get("type")==="recovery"){showRecoveryForm();}
 function go(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$("page-"+page).classList.remove("hidden");document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
 document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.goto)));
