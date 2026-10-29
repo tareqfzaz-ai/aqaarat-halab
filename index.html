@@ -272,8 +272,10 @@ function renderCases(){
 }
 function officeName(id){const o=offices.find(x=>String(x.id)===String(id));return o?o.office_name:"";}
 function renderFollowups(){
- const due=cases.filter(c=>c.follow_up_at&&c.follow_up_at<=today()&&!["تم الاتفاق","مغلق"].includes(c.status)).sort((a,b)=>(a.follow_up_at||"").localeCompare(b.follow_up_at||"")).slice(0,6);
- $("followUps").innerHTML=due.length?tableHtml(["فرصة","المكتب","موعد المتابعة","الحالة"],due.map(c=>'<tr><td class="primary-cell">'+esc(c.title)+'</td><td>'+esc(officeName(c.office_id)||"غير محدد")+'</td><td>'+esc(c.follow_up_at)+'</td><td>'+pill(c.status)+'</td></tr>')):emptyHtml("ما عندك متابعات مستحقة","لما تسجل موعد متابعة لفرصة تعاون، رح تظهر هون إذا صار موعدها اليوم أو تأخر.");
+ const caseItems=cases.filter(c=>c.follow_up_at&&c.follow_up_at<=today()&&!["تم الاتفاق","مغلق"].includes(c.status)).map(c=>({kind:"فرصة تعاون",title:c.title,owner:officeName(c.office_id)||"غير محدد",date:c.follow_up_at,status:c.status||"جديد"}));
+ const propertyItems=properties.filter(p=>p.follow_up_at&&p.follow_up_at<=today()&&!["مباع","مؤجر","موقوف"].includes(p.availability_status||"متوفر")).map(p=>({kind:"عقار",title:p.title||p.area||"عقار بدون عنوان",owner:(contacts.find(c=>String(c.id)===String(p.owner_contact_id))||{}).full_name||p.source_name||"مكتب الظاظا",date:p.follow_up_at,status:p.availability_status||"متوفر"}));
+ const due=caseItems.concat(propertyItems).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,8);
+ $("followUps").innerHTML=due.length?tableHtml(["النوع / التفاصيل","جهة التواصل","موعد المتابعة","الحالة"],due.map(x=>'<tr><td class="primary-cell">'+esc(x.title)+'<span class="subcell">'+esc(x.kind)+'</span></td><td>'+esc(x.owner)+'</td><td>'+esc(x.date)+(x.date<today()?' <span class="pill off">متأخرة</span>':' <span class="pill new">اليوم</span>')+'</td><td>'+pill(x.status)+'</td></tr>')):emptyHtml("ما عندك متابعات مستحقة","سجّل موعد متابعة للعقار أو لفرصة التعاون، وسيظهر هون إذا حلّ الموعد أو تأخر.");
 }
 async function updateRow(table,id,changes,msg){const {error}=await db.from(table).update(changes).eq("id",id);if(error){console.error(error);toast("ما قدرنا نحفظ التعديل. "+error.message,"error");return;}toast(msg);await refreshAll();}
 async function deleteRow(table,id,label){if(!confirm("متأكد بدك تحذف "+label+"؟ هذا الإجراء لا يمكن التراجع عنه."))return;const {error}=await db.from(table).delete().eq("id",id);if(error){console.error(error);toast("تعذر الحذف: "+error.message,"error");return;}toast("تم حذف "+label+".");await refreshAll();}
