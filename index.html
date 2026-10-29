@@ -65,6 +65,7 @@
      <article class="stat"><div class="stat-top"><span>العقارات المحفوظة</span><span class="stat-ico">🏠</span></div><strong id="countProperties">—</strong><small>سجل عقارات مكتب الظاظا</small></article>
      <article class="stat"><div class="stat-top"><span>طلبات الزبائن المفتوحة</span><span class="stat-ico">📥</span></div><strong id="countRequests">—</strong><small>بانتظار المتابعة أو الإغلاق</small></article>
      <article class="stat"><div class="stat-top"><span>المكاتب المتعاونة</span><span class="stat-ico">🤝</span></div><strong id="countOffices">—</strong><small>جهات اتصال بدون حسابات</small></article>
+     <article class="stat"><div class="stat-top"><span>جهات الاتصال</span><span class="stat-ico">👥</span></div><strong id="countContacts">—</strong><small>مكاتب وزبائن وملاك محفوظون</small></article>
      <article class="stat"><div class="stat-top"><span>فرص التعاون المفتوحة</span><span class="stat-ico">🔗</span><strong id="countCases">—</strong></div><small>متابعة العروض والطلبات مع المكاتب</small></article>
     </div>
     <section class="panel"><div class="panel-head"><div><h3>اختصارات سريعة</h3><p>افتح القسم المطلوب مباشرة.</p></div></div>
@@ -226,6 +227,7 @@ function renderAll(){
  $("countProperties").textContent=properties.length;
  $("countRequests").textContent=requests.filter(r=>r.status==="جديد"||r.status==="تم التواصل").length;
  $("countOffices").textContent=offices.filter(o=>o.status==="نشط").length;
+ $("countContacts").textContent=contacts.length;
  $("countCases").textContent=cases.filter(c=>!["تم الاتفاق","مغلق"].includes(c.status)).length;
  renderProperties();renderRequests();renderOffices();renderCases();renderContacts();renderFollowups();
 }
@@ -296,8 +298,9 @@ function openContact(c){
 }
 function openRequest(r){
  r=r||{};const edit=!!r.id;
- openModal(edit?"تعديل طلب الزبون":"تسجيل طلب زبون جديد",'<form id="requestForm" class="grid-form">'+selectField("rPurpose","العملية",["شراء","إيجار"],r.purpose||"شراء")+selectField("rType","نوع العقار",["شقة","منزل","فيلا","أرض","محل","مكتب","مستودع","بناء","مزرعة"],r.property_type||"شقة")+field("rArea","المنطقة المطلوبة *",r.area,"مثال: الفيض وحولها")+field("rBudget","الميزانية *",r.budget,"مثال: 50000–70000 دولار")+field("rContact","رقم الزبون *",r.contact,"رقم الهاتف أو واتساب")+textArea("rDetails","التفاصيل",r.details,"عدد الغرف، الطابق، شروط الزبون…")+modalButtons()+'</form>');
+ openModal(edit?"تعديل طلب الزبون":"تسجيل طلب زبون جديد",'<form id="requestForm" class="grid-form">'+selectField("rPurpose","العملية",["شراء","إيجار"],r.purpose||"شراء")+selectField("rType","نوع العقار",["شقة","منزل","فيلا","أرض","محل","مكتب","مستودع","بناء","مزرعة"],r.property_type||"شقة")+<div class="field span2"><label for="rContactPick">اختيار زبون من دفتر جهات الاتصال (اختياري)</label><select id="rContactPick"><option value="">إدخال رقم جديد يدوياً</option>"+contacts.filter(c=>c.contact_type==="زبون"||c.contact_type==="غير مصنف").map(c=>'<option value="'+c.id+'" data-phone="'+esc(c.phone||"")+'" data-area="'+esc(c.area||"")+'" '+((r.contact&&c.phone===r.contact)?"selected":"")+' >'+esc(c.full_name)+(c.phone?" — "+esc(c.phone):"")+'</option>').join("")+"</select></div>+field("rArea","المنطقة المطلوبة *",r.area,"مثال: الفيض وحولها")+field("rBudget","الميزانية *",r.budget,"مثال: 50000–70000 دولار")+field("rContact","رقم الزبون *",r.contact,"رقم الهاتف أو واتساب")+textArea("rDetails","التفاصيل",r.details,"عدد الغرف، الطابق، شروط الزبون…")+modalButtons()+'</form>');
  $("cancelModal").onclick=closeModal;
+ const contactPick=$("rContactPick");if(contactPick)contactPick.addEventListener("change",()=>{const opt=contactPick.selectedOptions[0];if(opt&&opt.dataset.phone){$("rContact").value=opt.dataset.phone;if(opt.dataset.area&&!$("rArea").value.trim())$("rArea").value=opt.dataset.area;}});
  $("requestForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const row={purpose:$("rPurpose").value,property_type:$("rType").value,area:$("rArea").value.trim(),budget:$("rBudget").value.trim(),contact:$("rContact").value.trim(),details:$("rDetails").value.trim()};if(!row.area||!row.budget||row.contact.length<5){setBusy(btn,false);toast("عبّي المنطقة والميزانية ورقم تواصل صحيح.","error");return;}const result=edit?await db.from("customer_requests").update(row).eq("id",r.id):await db.from("customer_requests").insert(row);setBusy(btn,false);if(result.error){toast("ما قدرنا نحفظ الطلب: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تعديل الطلب.":"تم تسجيل طلب الزبون.");await refreshAll();};
 }
 function openOffice(o){
