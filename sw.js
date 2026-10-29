@@ -1,4 +1,4 @@
-const CACHE="aqaarat-halab-v28";
+const CACHE="aqaarat-halab-v29";
 const APP_SHELL=["./","./index.html","./manifest.webmanifest","./icon.svg","./cover.png"];
 
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(APP_SHELL)).then(()=>self.skipWaiting())));
