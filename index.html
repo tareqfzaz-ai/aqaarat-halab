@@ -151,29 +151,6 @@ function showLoginForm(){
  $("resetPasswordForm").classList.add("hidden");$("loginForm").classList.remove("hidden");$("forgotPasswordBtn").classList.remove("hidden");
  $("newPassword").value="";$("confirmPassword").value="";
 }
-$("forgotPasswordBtn").addEventListener("click",async()=>{
- const email=$("loginEmail").value.trim().toLowerCase();
- if(email!==ADMIN_EMAIL){loginMessage("اكتب بريد الإدارة المعتمد أولاً: tareqfzaz@gmail.com",true);$("loginEmail").focus();return;}
- const btn=$("forgotPasswordBtn");setBusy(btn,true,"جاري الاتصال وإرسال الرابط…");
- loginMessage("عم نحاول إرسال رابط الاستعادة، انتظر قليلاً…",false);
- try{
-  if(!window.supabase||!db||!db.auth)throw new Error("SUPABASE_CLIENT_NOT_LOADED");
-  const result=await Promise.race([
-   db.auth.resetPasswordForEmail(email,{redirectTo:"https://tareqfzaz-ai.github.io/aqaarat-halab/"}),
-   new Promise((_,reject)=>setTimeout(()=>reject(new Error("REQUEST_TIMEOUT")),15000))
-  ]);
-  if(result.error)throw result.error;
-  loginMessage("تم طلب إرسال رابط الاستعادة. افحص البريد الوارد والرسائل غير المرغوب فيها (Spam)، ثم افتح أحدث رسالة.",false);
- }catch(err){
-  console.error("Password recovery failed:",err);
-  const detail=String(err&&(err.message||err.code)||"").toLowerCase();
-  if(detail.includes("timeout"))loginMessage("الاتصال تأخر ولم يصل رد. جرّب إيقاف الـVPN أو تبديله، ثم أعد المحاولة.",true);
-  else if(detail.includes("fetch")||detail.includes("network")||detail.includes("failed"))loginMessage("تعذّر الاتصال بخدمة الاستعادة. بدّل الـVPN أو افتح الرابط بمتصفح Chrome ثم أعد المحاولة.",true);
-  else if(detail.includes("rate")||detail.includes("too many"))loginMessage("تم طلب روابط كثيرة خلال وقت قصير. انتظر ساعة قبل المحاولة مجدداً.",true);
-  else if(detail.includes("not_loaded"))loginMessage("مكتبة الاتصال لم تُحمّل. بدّل الـVPN وافتح الرابط من جديد.",true);
-  else loginMessage("لم يتم إرسال الرابط: "+String(err&&err.message||"خطأ غير معروف"),true);
- }finally{setBusy(btn,false);}
-});
 $("backToLoginBtn").addEventListener("click",showLoginForm);
 $("resetPasswordForm").addEventListener("submit",async e=>{
  e.preventDefault();
@@ -202,7 +179,11 @@ db.auth.onAuthStateChange((event,session)=>{
  if(event==="PASSWORD_RECOVERY"){showRecoveryForm();return;}
  if(!session){currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}
 });
-if(new URLSearchParams(window.location.hash.slice(1)).get("type")==="recovery"){showRecoveryForm();}
+const recoveryHashParams=new URLSearchParams(window.location.hash.slice(1));
+const recoveryQueryParams=new URLSearchParams(window.location.search);
+if(recoveryHashParams.get("type")==="recovery" || recoveryQueryParams.get("type")==="recovery" || recoveryQueryParams.has("code")){
+ showRecoveryForm();
+}
 function go(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$("page-"+page).classList.remove("hidden");document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
 document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.goto)));
