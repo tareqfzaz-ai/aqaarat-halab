@@ -51,6 +51,7 @@
    <div class="side-title">إدارة شبكة الظاظا</div>
    <button class="navbtn active" data-page="dashboard"><span class="ico">▦</span>لوحة العمل</button>
    <button class="navbtn" data-page="properties"><span class="ico">🏠</span>العقارات</button>
+   <button class="navbtn" data-page="contacts"><span class="ico">👥</span>جهات الاتصال</button>
    <button class="navbtn" data-page="requests"><span class="ico">📥</span>طلبات الزبائن</button>
    <button class="navbtn" data-page="offices"><span class="ico">🤝</span>المكاتب المتعاونة</button>
    <button class="navbtn" data-page="cases"><span class="ico">🔗</span>فرص التعاون</button>
@@ -70,6 +71,7 @@
      <div class="quick-grid">
       <button class="quick" data-goto="properties"><span>➕</span><strong>إضافة عقار</strong><small>سجّل عقاراً جديداً وعدّل بياناته لاحقاً.</small></button>
       <button class="quick" data-goto="requests"><span>📝</span><strong>تسجيل طلب زبون</strong><small>احفظ المنطقة والميزانية والتفاصيل ومعلومات التواصل.</small></button>
+      <button class="quick" data-goto="contacts"><span>👥</span><strong>إضافة جهة اتصال</strong><small>احفظ المكتب أو الزبون أو صاحب البيت ورقم التواصل.</small></button>
       <button class="quick" data-goto="offices"><span>🤝</span><strong>إضافة مكتب متعاون</strong><small>احفظ رقم المكتب والمناطق التي يعمل فيها.</small></button>
       <button class="quick" data-goto="cases"><span>🔗</span><strong>تسجيل فرصة تعاون</strong><small>اربط طلباً أو عقاراً بمكتب وتابع الرد والاتفاق.</small></button>
      </div>
@@ -79,6 +81,13 @@
    <section id="page-properties" class="page hidden">
     <div class="page-head"><div><h2>إدارة العقارات</h2><p>سجّل عقاراتك، عدّل بياناتها، واحتفظ بتفاصيل التواصل في مكان خاص.</p></div><button class="btn btn-gold" id="newPropertyBtn">＋ إضافة عقار</button></div>
     <div class="panel"><div class="toolbar"><input id="propertySearch" placeholder="ابحث بالعنوان أو المنطقة أو السعر أو المصدر…"><select id="propertyFilter"><option value="">كل العمليات</option><option>بيع</option><option>إيجار</option><option>رهن</option></select><select id="propertyStatusFilter"><option value="">كل حالات العقار</option><option>متوفر</option><option>محجوز</option><option>مباع</option><option>مؤجر</option><option>موقوف</option></select></div><div id="propertiesList"><div class="empty">جاري تحميل العقارات…</div></div></div>
+   </section>
+   <section id="page-contacts" class="page hidden">
+    <div class="page-head"><div><h2>جهات الاتصال</h2><p>دفتر مركزي للمكاتب والزبائن وأصحاب البيوت؛ لا يتم تخمين التصنيف.</p></div><button class="btn btn-gold" id="newContactBtn">＋ جهة اتصال</button></div>
+    <div class="panel">
+     <div class="toolbar"><input id="contactSearch" placeholder="ابحث بالاسم أو الرقم أو المنطقة…"><select id="contactTypeFilter"><option value="">كل التصنيفات</option><option>مكتب عقاري</option><option>زبون</option><option>صاحب بيت</option><option>صاحبة بيت</option><option>مالك/مالكة</option><option>غير مصنف</option></select><select id="contactStatusFilter"><option value="">كل الحالات</option><option>نشط</option><option>بحاجة متابعة</option><option>غير نشط</option></select></div>
+     <div id="contactsList"><div class="empty">جاري تحميل جهات الاتصال…</div></div>
+    </div>
    </section>
    <section id="page-requests" class="page hidden">
     <div class="page-head"><div><h2>طلبات الزبائن</h2><p>سجّل طلبات الشراء والإيجار وتابع حالة كل زبون.</p></div><button class="btn btn-gold" id="newRequestBtn">＋ تسجيل طلب</button></div>
@@ -128,7 +137,7 @@ const SUPABASE_URL="https://kypzypsonkzfrhpldtmp.supabase.co";
 const SUPABASE_KEY="sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-";
 const ADMIN_EMAIL="tareqfzaz@gmail.com";
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{flowType:"pkce",detectSessionInUrl:false,persistSession:true,autoRefreshToken:true}});
-let currentUser=null, properties=[], requests=[], offices=[], cases=[];
+let currentUser=null, properties=[], requests=[], offices=[], cases=[], contacts=[];
 const $=id=>document.getElementById(id);
 const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const today=()=>new Date().toISOString().slice(0,10);
@@ -209,7 +218,7 @@ async function fetchRows(table,order="created_at"){const {data,error}=await db.f
 async function refreshAll(){
  if(!currentUser)return;
  try{
-  [properties,requests,offices,cases]=await Promise.all([fetchRows("properties"),fetchRows("customer_requests"),fetchRows("partner_offices"),fetchRows("collaboration_cases")]);
+  [properties,requests,offices,cases,contacts]=await Promise.all([fetchRows("properties"),fetchRows("customer_requests"),fetchRows("partner_offices"),fetchRows("collaboration_cases"),fetchRows("crm_contacts")]);
   renderAll();
  }catch(e){console.error(e);toast("تعذّر تحميل بعض البيانات. تأكد من صلاحيات قاعدة البيانات ثم أعد المحاولة.","error");}
 }
@@ -218,7 +227,7 @@ function renderAll(){
  $("countRequests").textContent=requests.filter(r=>r.status==="جديد"||r.status==="تم التواصل").length;
  $("countOffices").textContent=offices.filter(o=>o.status==="نشط").length;
  $("countCases").textContent=cases.filter(c=>!["تم الاتفاق","مغلق"].includes(c.status)).length;
- renderProperties();renderRequests();renderOffices();renderCases();renderFollowups();
+ renderProperties();renderRequests();renderOffices();renderCases();renderContacts();renderFollowups();
 }
 function emptyHtml(title,desc){return '<div class="empty"><b>'+esc(title)+'</b>'+esc(desc)+'</div>';}
 function tableHtml(headers,rows){if(!rows.length)return emptyHtml("ما في سجلات لحد الآن","اضغط زر الإضافة للبدء. كل السجلات تبقى خاصة بحساب الإدارة.");return '<div class="table-wrap"><table><thead><tr>'+headers.map(h=>"<th>"+h+"</th>").join("")+'</tr></thead><tbody>'+rows.join("")+'</tbody></table></div>';}
@@ -229,6 +238,13 @@ function renderProperties(){
  $("propertiesList").innerHTML=tableHtml(["العقار","العملية / النوع","السعر","الحالة / المتابعة","المصدر / التواصل","إجراءات"],rows.map(p=>'<tr><td class="primary-cell">'+esc(p.title)+'<span class="subcell">'+esc(p.area||"منطقة غير محددة")+(p.size?" · "+esc(p.size):"")+'</span></td><td>'+esc(p.type||"—")+'<span class="subcell">'+esc(p.purpose||"")+'</span></td><td>'+esc(p.price||"—")+'</td><td>'+pill(p.availability_status||"متوفر")+'<span class="subcell">'+(p.follow_up_at?"متابعة: "+esc(p.follow_up_at):"لا يوجد موعد متابعة")+'</span></td><td>'+esc(p.source_name||"مكتب الظاظا")+'<span class="subcell">'+esc(p.phone||"—")+'</span></td><td><div class="actions"><button class="btn btn-light btn-small" data-edit-property="'+p.id+'">تعديل</button><button class="btn btn-red btn-small" data-delete-property="'+p.id+'">حذف</button></div></td></tr>')));
  $("propertiesList").querySelectorAll("[data-edit-property]").forEach(b=>b.onclick=()=>openProperty(properties.find(p=>String(p.id)===b.dataset.editProperty)));
  $("propertiesList").querySelectorAll("[data-delete-property]").forEach(b=>b.onclick=()=>deleteRow("properties",b.dataset.deleteProperty,"العقار"));
+}
+function renderContacts(){
+ const q=($("contactSearch").value||"").trim().toLowerCase(),f=$("contactTypeFilter").value,st=$("contactStatusFilter").value;
+ const rows=contacts.filter(c=>(!f||c.contact_type===f)&&(!st||c.status===st)&&[c.full_name,c.phone,c.area,c.notes,c.contact_type].join(" ").toLowerCase().includes(q));
+ $("contactsList").innerHTML=tableHtml(["الاسم","التصنيف","المنطقة","الحالة","إجراءات"],rows.map(c=>'<tr><td class="primary-cell">'+esc(c.full_name)+'<span class="subcell">'+(c.phone?esc(c.phone):"لا يوجد رقم محفوظ")+'</span></td><td>'+pill(c.contact_type)+'</td><td>'+esc(c.area||"—")+'</td><td>'+pill(c.status)+'</td><td><div class="actions">'+(c.phone?'<a class="btn btn-green btn-small" target="_blank" rel="noopener" href="https://wa.me/'+esc(c.phone.replace(/[^0-9]/g,""))+'">واتساب</a>':"")+'<button class="btn btn-light btn-small" data-edit-contact="'+c.id+'">تعديل</button><button class="btn btn-red btn-small" data-delete-contact="'+c.id+'">حذف</button></div></td></tr>')));
+ $("contactsList").querySelectorAll("[data-edit-contact]").forEach(b=>b.onclick=()=>openContact(contacts.find(c=>String(c.id)===b.dataset.editContact)));
+ $("contactsList").querySelectorAll("[data-delete-contact]").forEach(b=>b.onclick=()=>deleteRow("crm_contacts",b.dataset.deleteContact,"جهة الاتصال"));
 }
 function renderRequests(){
  const q=($("requestSearch").value||"").trim().toLowerCase(),f=$("requestFilter").value;
@@ -272,6 +288,12 @@ function openProperty(p){
  $("cancelModal").onclick=closeModal;
  $("propertyForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const row={title:$("pTitle").value.trim(),purpose:$("pPurpose").value,type:$("pType").value,area:$("pArea").value.trim(),price:$("pPrice").value.trim(),size:$("pSize").value.trim(),availability_status:$("pAvailability").value,source_name:$("pSource").value.trim()||"مكتب الظاظا",follow_up_at:$("pFollowUp").value||null,phone:$("pPhone").value.trim(),image:$("pImage").value.trim(),video_url:$("pVideo").value.trim(),description:$("pDescription").value.trim()};if(!row.title){setBusy(btn,false);toast("اكتب عنوان العقار أولاً.","error");return;}const result=edit?await db.from("properties").update(row).eq("id",p.id):await db.from("properties").insert(row);setBusy(btn,false);if(result.error){toast("ما قدرنا نحفظ العقار: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تحديث العقار.":"تم حفظ العقار بشكل خاص.");await refreshAll();};
 }
+function openContact(c){
+ c=c||{};const edit=!!c.id;
+ openModal(edit?"تعديل جهة الاتصال":"إضافة جهة اتصال",'<form id="contactForm" class="grid-form">'+field("ctName","الاسم الكامل *",c.full_name,"اسم الشخص أو المكتب")+selectField("ctType","التصنيف",["مكتب عقاري","زبون","صاحب بيت","صاحبة بيت","مالك/مالكة","غير مصنف"],c.contact_type||"غير مصنف")+field("ctPhone","رقم الهاتف أو واتساب",c.phone,"أدخل الرقم مع رمز البلد إن أمكن")+field("ctArea","المنطقة",c.area,"مثال: سيف الدولة، الإذاعة")+selectField("ctStatus","الحالة",["نشط","بحاجة متابعة","غير نشط"],c.status||"نشط")+textArea("ctNotes","ملاحظات خاصة",c.notes,"تفاصيل التواصل أو ما يطلبه الشخص")+modalButtons()+'</form>');
+ $("cancelModal").onclick=closeModal;
+ $("contactForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const row={full_name:$("ctName").value.trim(),contact_type:$("ctType").value,phone:$("ctPhone").value.trim(),area:$("ctArea").value.trim(),status:$("ctStatus").value,notes:$("ctNotes").value.trim(),updated_at:new Date().toISOString()};if(row.full_name.length<2){setBusy(btn,false);toast("اكتب الاسم أولاً.","error");return;}const result=edit?await db.from("crm_contacts").update(row).eq("id",c.id):await db.from("crm_contacts").insert(row);setBusy(btn,false);if(result.error){toast("ما قدرنا نحفظ جهة الاتصال: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تحديث جهة الاتصال.":"تم حفظ جهة الاتصال بشكل خاص.");await refreshAll();};
+}
 function openRequest(r){
  r=r||{};const edit=!!r.id;
  openModal(edit?"تعديل طلب الزبون":"تسجيل طلب زبون جديد",'<form id="requestForm" class="grid-form">'+selectField("rPurpose","العملية",["شراء","إيجار"],r.purpose||"شراء")+selectField("rType","نوع العقار",["شقة","منزل","فيلا","أرض","محل","مكتب","مستودع","بناء","مزرعة"],r.property_type||"شقة")+field("rArea","المنطقة المطلوبة *",r.area,"مثال: الفيض وحولها")+field("rBudget","الميزانية *",r.budget,"مثال: 50000–70000 دولار")+field("rContact","رقم الزبون *",r.contact,"رقم الهاتف أو واتساب")+textArea("rDetails","التفاصيل",r.details,"عدد الغرف، الطابق، شروط الزبون…")+modalButtons()+'</form>');
@@ -291,8 +313,9 @@ function openCase(c){
  $("cancelModal").onclick=closeModal;
  $("caseForm").onsubmit=async e=>{e.preventDefault();const btn=e.submitter;setBusy(btn,true,"عم نحفظ…");const officeVal=$("cOffice").value;const row={title:$("cTitle").value.trim(),purpose:$("cPurpose").value,office_id:officeVal?Number(officeVal):null,area:$("cArea").value.trim(),budget:$("cBudget").value.trim(),contact:$("cContact").value.trim(),commission:$("cCommission").value.trim(),status:$("cStatus").value,follow_up_at:$("cFollow").value||null,notes:$("cNotes").value.trim()};if(row.title.length<2){setBusy(btn,false);toast("اكتب عنوان فرصة التعاون.","error");return;}const result=edit?await db.from("collaboration_cases").update(row).eq("id",c.id):await db.from("collaboration_cases").insert(row);setBusy(btn,false);if(result.error){toast("تعذر حفظ فرصة التعاون: "+result.error.message,"error");return;}closeModal();toast(edit?"تم تحديث فرصة التعاون.":"تم تسجيل فرصة التعاون.");await refreshAll();};
 }
-$("newPropertyBtn").onclick=()=>openProperty();$("newRequestBtn").onclick=()=>openRequest();$("newOfficeBtn").onclick=()=>openOffice();$("newCaseBtn").onclick=()=>openCase();
+$("newPropertyBtn").onclick=()=>openProperty();$("newContactBtn").onclick=()=>openContact();$("newRequestBtn").onclick=()=>openRequest();$("newOfficeBtn").onclick=()=>openOffice();$("newCaseBtn").onclick=()=>openCase();
 ["propertySearch","propertyFilter","propertyStatusFilter"].forEach(id=>$(id).addEventListener("input",renderProperties));
+["contactSearch","contactTypeFilter","contactStatusFilter"].forEach(id=>$(id).addEventListener("input",renderContacts));
 ["requestSearch","requestFilter"].forEach(id=>$(id).addEventListener("input",renderRequests));
 ["officeSearch","officeFilter"].forEach(id=>$(id).addEventListener("input",renderOffices));
 ["caseSearch","caseFilter"].forEach(id=>$(id).addEventListener("input",renderCases));
