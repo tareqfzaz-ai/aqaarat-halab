@@ -279,7 +279,7 @@ $("newPropertyBtn").onclick=()=>openProperty();$("newRequestBtn").onclick=()=>op
 ["officeSearch","officeFilter"].forEach(id=>$(id).addEventListener("input",renderOffices));
 ["caseSearch","caseFilter"].forEach(id=>$(id).addEventListener("input",renderCases));
 verifySession();
-if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js?v=26").then(reg=>reg.update()).catch(()=>{});}
+if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js?v=27").then(reg=>reg.update()).catch(()=>{});}
 </script>
 </body>
 </html>
