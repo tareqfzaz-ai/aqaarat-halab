@@ -119,7 +119,7 @@ window.recoverAdminPassword = async function(){
   ]);
   if(result.error)throw result.error;
   show("وصل طلب الاستعادة بنجاح. افحص البريد الوارد وSpam، وافتح أحدث رسالة.",false);
- }catch(e){show("فشل الإرسال: "+(e&&e.message?e.message:"تعذّر الاتصال")+". جرّب تبديل الـVPN.",true);}
+ }catch(e){show("فشل الإرسال: "+(e&&e.message?e.message:"تعذّر الاتصال")+". انتظر قليلاً قبل إعادة المحاولة، لأن خدمة البريد حدّت عدد الرسائل.",true);}
  finally{if(btn){btn.disabled=false;btn.textContent="نسيت كلمة المرور؟ إرسال رابط استعادة";}}
 };
 </script>
@@ -127,7 +127,7 @@ window.recoverAdminPassword = async function(){
 const SUPABASE_URL="https://kypzypsonkzfrhpldtmp.supabase.co";
 const SUPABASE_KEY="sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-";
 const ADMIN_EMAIL="tareqfzaz@gmail.com";
-const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{flowType:"pkce",detectSessionInUrl:false,persistSession:true,autoRefreshToken:true}});
 let currentUser=null, properties=[], requests=[], offices=[], cases=[];
 const $=id=>document.getElementById(id);
 const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -179,11 +179,29 @@ db.auth.onAuthStateChange((event,session)=>{
  if(event==="PASSWORD_RECOVERY"){showRecoveryForm();return;}
  if(!session){currentUser=null;$("appScreen").classList.add("hidden");$("loginScreen").classList.remove("hidden");}
 });
-const recoveryHashParams=new URLSearchParams(window.location.hash.slice(1));
-const recoveryQueryParams=new URLSearchParams(window.location.search);
-if(recoveryHashParams.get("type")==="recovery" || recoveryQueryParams.get("type")==="recovery" || recoveryQueryParams.has("code")){
- showRecoveryForm();
+async function processRecoveryLink(){
+ const recoveryHashParams=new URLSearchParams(window.location.hash.slice(1));
+ const recoveryQueryParams=new URLSearchParams(window.location.search);
+ const code=recoveryQueryParams.get("code");
+ if(code){
+  const {error}=await db.auth.exchangeCodeForSession(code);
+  if(error){loginMessage("رابط الاستعادة غير صالح أو منتهي. بعد انتهاء مهلة البريد، اطلب رابطاً جديداً وافتح أحدث رسالة.",true);console.error(error);return;}
+  showRecoveryForm();
+  return;
+ }
+ const access_token=recoveryHashParams.get("access_token");
+ const refresh_token=recoveryHashParams.get("refresh_token");
+ if(recoveryHashParams.get("type")==="recovery" && access_token && refresh_token){
+  const {error}=await db.auth.setSession({access_token,refresh_token});
+  if(error){loginMessage("تعذّر تفعيل رابط الاستعادة. افتح أحدث رسالة استعادة بعد انتهاء مهلة البريد.",true);console.error(error);return;}
+  showRecoveryForm();
+  return;
+ }
+ if(recoveryHashParams.get("type")==="recovery" || recoveryQueryParams.get("type")==="recovery"){
+  showRecoveryForm();
+ }
 }
+processRecoveryLink();
 function go(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$("page-"+page).classList.remove("hidden");document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
 document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.goto)));
