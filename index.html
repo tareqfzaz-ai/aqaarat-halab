@@ -185,9 +185,10 @@ window.recoverAdminPassword = async function(){
   if(!window.supabase||!window.supabase.createClient){
    show("مكتبة الاتصال ما عم تتحمّل على جهازك. جرّب فتح الرابط بمتصفح Chrome مع تبديل الـVPN.",true);return;
   }
-  const client=window.supabase.createClient("https://kypzypsonkzfrhpldtmp.supabase.co","sb_publishable_9QRajsRSbCM2ee5nEphoAg_xmRUQR2-");
+  // Use the same PKCE client as the login flow so the recovery verifier
+  // is stored consistently and the returned code can be exchanged below.
   const result=await Promise.race([
-   client.auth.resetPasswordForEmail(email,{redirectTo:"https://tareqfzaz-ai.github.io/aqaarat-halab/"}),
+   db.auth.resetPasswordForEmail(email,{redirectTo:"https://tareqfzaz-ai.github.io/aqaarat-halab/"}),
    new Promise((_,reject)=>setTimeout(()=>reject(new Error("انتهت مهلة الاتصال بعد 15 ثانية")),15000))
   ]);
   if(result.error)throw result.error;
@@ -256,25 +257,32 @@ async function processRecoveryLink(){
  const recoveryHashParams=new URLSearchParams(window.location.hash.slice(1));
  const recoveryQueryParams=new URLSearchParams(window.location.search);
  const code=recoveryQueryParams.get("code");
- if(code){
-  const {error}=await db.auth.exchangeCodeForSession(code);
-  if(error){loginMessage("رابط الاستعادة غير صالح أو منتهي. بعد انتهاء مهلة البريد، اطلب رابطاً جديداً وافتح أحدث رسالة.",true);console.error(error);return;}
-  showRecoveryForm();
-  return;
+ try{
+  if(code){
+   const {error}=await db.auth.exchangeCodeForSession(code);
+   if(error){loginMessage("رابط الاستعادة غير صالح أو منتهي. اطلب رابطاً جديداً وافتح أحدث رسالة وصلتك.",true);console.error(error);return true;}
+   showRecoveryForm();
+   return true;
+  }
+  const access_token=recoveryHashParams.get("access_token");
+  const refresh_token=recoveryHashParams.get("refresh_token");
+  if(recoveryHashParams.get("type")==="recovery" && access_token && refresh_token){
+   const {error}=await db.auth.setSession({access_token,refresh_token});
+   if(error){loginMessage("تعذّر تفعيل رابط الاستعادة. اطلب رابطاً جديداً وافتح أحدث رسالة.",true);console.error(error);return true;}
+   showRecoveryForm();
+   return true;
+  }
+  if(recoveryHashParams.get("type")==="recovery" || recoveryQueryParams.get("type")==="recovery"){
+   showRecoveryForm();
+   return true;
+  }
+ }catch(error){
+  loginMessage("تعذّر تجهيز صفحة تغيير كلمة المرور. اطلب رابط استعادة جديداً وحاول مرة أخرى.",true);
+  console.error(error);
+  return true;
  }
- const access_token=recoveryHashParams.get("access_token");
- const refresh_token=recoveryHashParams.get("refresh_token");
- if(recoveryHashParams.get("type")==="recovery" && access_token && refresh_token){
-  const {error}=await db.auth.setSession({access_token,refresh_token});
-  if(error){loginMessage("تعذّر تفعيل رابط الاستعادة. افتح أحدث رسالة استعادة بعد انتهاء مهلة البريد.",true);console.error(error);return;}
-  showRecoveryForm();
-  return;
- }
- if(recoveryHashParams.get("type")==="recovery" || recoveryQueryParams.get("type")==="recovery"){
-  showRecoveryForm();
- }
+ return false;
 }
-processRecoveryLink();
 function go(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$("page-"+page).classList.remove("hidden");document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
 document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.goto)));
@@ -369,8 +377,11 @@ $("newPropertyBtn").onclick=()=>openProperty();$("newRequestBtn").onclick=()=>op
 ["requestSearch","requestFilter"].forEach(id=>$(id).addEventListener("input",renderRequests));
 ["officeSearch","officeFilter"].forEach(id=>$(id).addEventListener("input",renderOffices));
 ["caseSearch","caseFilter"].forEach(id=>$(id).addEventListener("input",renderCases));
-verifySession();
-if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js?v=28").then(reg=>reg.update()).catch(()=>{});}
+(async()=>{
+ const isRecovery=await processRecoveryLink();
+ if(!isRecovery) await verifySession();
+})();
+if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js?v=29").then(reg=>reg.update()).catch(()=>{});}
 </script>
 </body>
 </html>
