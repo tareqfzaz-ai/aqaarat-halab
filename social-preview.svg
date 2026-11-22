@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#09152d"/><stop offset="1" stop-color="#263f6c"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff0b5"/><stop offset="1" stop-color="#d5a93e"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#5475a9" stop-opacity=".55"/><stop offset="1" stop-color="#17294a" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1200" height="630" fill="url(#bg)"/><circle cx="1000" cy="90" r="380" fill="url(#glow)"/>
+<path d="M0 480 Q180 410 330 480 T650 470 T950 450 T1200 470 V630 H0Z" fill="#0b1831"/>
+<g fill="none" stroke="url(#gold)" stroke-width="8" stroke-linejoin="round">
+ <path d="M780 210 V115 L855 45 L930 115 V210 M825 210 V145 H885 V210 M950 210 V95 L1010 35 L1070 95 V210"/>
+ <path d="M740 210 H1110 M770 125 H810 M970 125 H1000 M1035 125 H1060"/>
+</g>
+<path d="M55 450 L110 375 L165 450 L220 390 L280 450" fill="none" stroke="#d7b45b" stroke-width="5" opacity=".75"/>
+<g fill="#fff" text-anchor="middle" font-family="Arial,Tahoma,sans-serif">
+ <text x="600" y="300" font-size="74" font-weight="bold" fill="#fff">شبكة عقارات</text>
+ <text x="600" y="390" font-size="100" font-weight="bold" fill="url(#gold)">الظاظا</text>
+ <text x="600" y="445" font-size="35" fill="#f5e7bd">حلب وريفها</text>
+ <text x="600" y="510" font-size="29" fill="#fff">بيع • شراء • إيجار • طلبات الزبائن</text>
+ <text x="600" y="570" font-size="32" font-weight="bold" fill="#f4d47e">0957839713  |  مكتب الظاظا</text>
+</g>
+<rect x="24" y="24" width="1152" height="582" rx="28" fill="none" stroke="#d9b65c" stroke-width="3"/>
+</svg>
